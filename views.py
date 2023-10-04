@@ -46,7 +46,7 @@ def login():
                         ['country', ipdata['country']],
                         ['updated_on', datetime.utcnow()]
                     ]
-                    db.UpdateUser(data)
+                    db.UpdateUser(data, 'username', request.form['username'])
                     
             return redirect(url_for('panel', username=request.form['username']))
         else:

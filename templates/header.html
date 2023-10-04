@@ -1,0 +1,27 @@
+<nav class="nav">
+    <div class="nav__top">
+        <h3 class="nav__title">
+            Telefish
+        </h3>
+        <div class="nav__burger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <a class="nav__logout" href="{{ url_for('logout') }}">
+            <i class="fa-solid fa-right-from-bracket fa-lg" style="color: #FFFFFF"></i>
+        </a>
+    </div>
+    
+    <ul class="nav__links animate__animated">
+        
+        {% if admin %}
+        <li><a href="{{ url_for('panel', top_users=True) }}">Топ пользователей</a></li>
+        <li><a href="{{ url_for('panel', users_manage=True) }}">Управление пользователями</a></li>
+        {% else %}
+        <li><a href="{{ url_for('panel') }}">Аккаунты</a></li>
+        <li><a href="{{ url_for('domains') }}">Мои домены</a></li>
+        {% endif %}
+    </ul>
+</nav>

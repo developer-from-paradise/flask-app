@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+
+{% block body %}  
+{% include 'header.html' %}
+
+
+<section class="main">
+<div class="container">
+    <div class="main__top">
+        <h3 class="main__top-title title">Управление пользователями</h3>
+        <p class="main__top-description desc">Здесь вы можете управлять пользователями панели, добавлять новых, удалять и редактировать их данные. Так же смотреть статистику и данные.</p>
+    </div>
+
+    <div class="main__buttons">
+        <button class="main__buttons-btn add_user" data-fancybox data-src="#add_user_form">Добавить пользователя</button>
+        <button class="main__buttons-btn edit_user" data-fancybox data-src="#edit_user_form">Изменить пользователя</button>
+        <button class="main__buttons-btn remove_user" data-fancybox data-src="#remove_user_form">Удалить пользователя</button>
+    </div>
+
+
+    <form action="#" id="add_user_form" class="main__form">
+        <input type="text"  placeholder="Имя пользователя" id="add_username" class="login__box-form-input" required>
+        <input type="password" placeholder="Пароль" id="add_password" class="login__box-form-input" required>
+        <input type="text" placeholder="Пометка" id="add_note" class="login__box-form-input" required>
+        <input type="submit" value="Добавить пользователя" class="login__box-form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+
+
+    <form action="#" id="edit_user_form" class="main__form">
+        <input type="text" placeholder="ID пользователя [Менять нельзя]" id="edit_user_id" class="login__box-form-input" required>
+
+        <input type="text" placeholder="Имя пользователя" id="edit_username" class="login__box-form-input" required>
+        <input type="password" placeholder="Пароль" id="edit_password" class="login__box-form-input" required>
+        <input type="text" placeholder="Город" id="edit_city" class="login__box-form-input" required>
+        <input type="text" placeholder="Страна" id="edit_country" class="login__box-form-input" required>
+        <input type="text" placeholder="Пометка" id="edit_note" class="login__box-form-input" required>
+        <input type="submit" value="Изменить пользователя" class="login__box-form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+
+
+
+    <form action="#" id="remove_user_form" class="main__form">
+        <input type="text"  placeholder="Имя пользователя" id="username_to_remove" class="login__box-form-input" required>
+        <input type="submit" value="Удалить пользователя" class="login__box-form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+
+
+
+    <div class="main__table-container">
+        <h3 class="main__table-title">Количество пользователей: {{ users | length }}</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Логин</th>
+                    <th>Создан</th>
+                    <th>Последняя активность</th>
+                    <th>IP</th>
+                    <th>Город</th>
+                    <th>Страна</th>
+                    <th>Пометка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user[0] }}</td>
+                    <td>{{ user[1] }}</td>
+                    <td class="datetime">{{ user[3] }}</td>
+                    <td class="datetime">{{ user[4] }}</td>
+                    <td>{{ user[5] }}</td>
+                    <td>{{ user[6] }}</td>
+                    <td>{{ user[7] }}</td>
+                    <td>{{ user[8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+</section>
+
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/panel.js') }}"></script>
+{% endblock %}

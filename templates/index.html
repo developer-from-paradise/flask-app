@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
+
+{% endblock %}
+
+
+{% block body %}  
+{% include 'header.html' %}
+
+{% if not admin %}
+
+
+<section class="logs">
+<div class="container">
+    <h3 class="logs__title title">
+        Аккаунты
+    </h3>
+
+    <p class="logs__description desc">
+        <b>Внимание!</b> Аккаунты хранятся 7 дней, после чего безвозвратно удаляются! Своевременно скачивайте свои аккаунты! <br>
+        Скачивание и удаление аккаунтов происходит в 3 шага: выделение, подготовка архива и скачивание. <br>
+        Ссылка на скачивание появится на этой странице через некоторое время (подготовка архива обычно занимает 1-2 минуты).
+    </p>
+
+
+
+
+    
+
+    <div class="main__table-container">
+        <h3 class="main__table-title">Количество логов: {{ logs | length }}</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Телефон</th>
+                    <th>Домен</th>
+                    <th>Время</th>
+                    <th>Шаблон</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log[0] }}</td>
+                    <td>{{ log[1] }}</td>
+                    <td class="datetime">{{ log[3] }}</td>
+                    <td>{{ log[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>    
+</section>
+{% endif %}
+
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/panel.js') }}"></script>
+{% endblock %}

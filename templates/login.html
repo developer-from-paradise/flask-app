@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+    
+{% block body %}
+<section class="login">
+        
+    <div class="login__box">
+        <svg viewBox="-2.4 -2.4 28.80 28.80" class="login__box-img" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1, 0, 0, 1, 0, 0)rotate(0)" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(0.9599999999999991,0.9599999999999991), scale(0.92)"><rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="14.4" fill="#CCCCCC" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="4.8"> <circle opacity="0.5" cx="12" cy="9" r="3" stroke="#FFFFFF" stroke-width="1.536"></circle> <circle cx="12" cy="12" r="10" stroke="#FFFFFF" stroke-width="1.536"></circle> <path opacity="0.5" d="M17.9691 20C17.81 17.1085 16.9247 15 11.9999 15C7.07521 15 6.18991 17.1085 6.03076 20" stroke="#FFFFFF" stroke-width="1.536" stroke-linecap="round"></path> </g><g id="SVGRepo_iconCarrier"> <circle opacity="0.5" cx="12" cy="9" r="3" stroke="#FFFFFF" stroke-width="1.536"></circle> <circle cx="12" cy="12" r="10" stroke="#FFFFFF" stroke-width="1.536"></circle> <path opacity="0.5" d="M17.9691 20C17.81 17.1085 16.9247 15 11.9999 15C7.07521 15 6.18991 17.1085 6.03076 20" stroke="#FFFFFF" stroke-width="1.536" stroke-linecap="round"></path> </g></svg>
+        <div class="login__box-text">
+            Для входа используйте данные указанные при регистрации.
+        </div>
+    </div>
+
+    <div class="login__box">
+        <div class="login__box-title">Telefish</div>
+        <div class="login__box-subtitle">Авторизация</div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    {% set msg, class_name = message %}
+                    <div class="login__box-info {{class_name}}">{{msg}}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}    
+        <form action="#" class="login__box-form" method="post">
+            <input type="text"  placeholder="Имя пользователя" name="username" id="" class="login__box-form-input">
+            <input type="password" placeholder="Пароль"  name="password" id="" class="login__box-form-input">
+            <input type="submit" value="Войти" class="login__box-form-btn">
+        </form>
+    </div>
+
+</section>
+{% endblock %}

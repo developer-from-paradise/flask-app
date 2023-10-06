@@ -8,6 +8,35 @@ $(".js-select2").select2({
 
 $('.form').submit(function(e){
     e.preventDefault();
-    let countries = $('.js-select2').val();
+    let 
+        countries = $('.js-select2').val(),
+        domain = $('#domain').val(),
+        page = $('#page').val(),
+        path = $('#path').val(),
+        redirect = $('#redirect').val();
+
+    $.ajax({
+        method: 'post',
+        url: '/add_domain',
+        data: {
+            countries: JSON.stringify(countries),
+            domain: domain,
+            page: page,
+            path: path,
+            redirect: redirect
+        },
+        success: function(data) {
+            console.log(data);
+            if (data.status == 'success') {
+                alert_box(data.message, 3000, 'var(--success)');
+            } else {
+                alert_box(data.message, 3000, 'var(--error)');
+            }
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
     
+
 });

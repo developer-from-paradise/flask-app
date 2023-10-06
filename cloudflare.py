@@ -1,5 +1,5 @@
 import requests
-
+from config import *
 
 
 class CloudFlare:
@@ -23,6 +23,7 @@ class CloudFlare:
             zones = response.json()['result']
             return zones
         else:
+            print(response.text)
             return False
     
 
@@ -41,6 +42,7 @@ class CloudFlare:
         if response.status_code == 200:
             return True
         else:
+            print(response.text)
             return False
         
     def GetAccount(self):
@@ -52,6 +54,7 @@ class CloudFlare:
             data = response.json()
             return data
         else:
+            print(response.text)
             return False
 
 
@@ -64,14 +67,24 @@ class CloudFlare:
         if response.status_code == 200:
             return True
         else:
+            print(response.text)
             return False
 
 
+    def BindDomain(self, zone_id, domain):
+        url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records'
 
+        data = {
+            'type': 'A',  # Change to 'CNAME' for a CNAME record
+            'name': domain,  # Replace with the name of the DNS record (e.g., subdomain.example.com)
+            'content': server_domain,
+            'proxied': True
+        }
 
-if __name__ == '__main__':
-    account_id = 'b780405629df43cca324250bc5d3e4c0'
-    api_key = '94a6d32b704a6b5aacf2c138087078ffbc41f'
-    email = 'kamazzcha@gmail.com'
-    
-    cl = CloudFlare(email, api_key, account_id)
+        response = requests.post(url, headers=self.headers, json=data)
+
+        if response.status_code == 200:
+            return True
+        else:
+            print(response.text)
+            return False

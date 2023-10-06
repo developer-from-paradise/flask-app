@@ -1,10 +1,10 @@
 from config import clf
 
 
-domain = 'depian.online'
+domains = 'depian.online'
 
 zones = clf.getDomains()
 
 for domain in zones:
-    if zones['domain'] == domain:
-        clf.BindDomain()
+    if domain['name'] == domains:
+        clf.BindDomain(domain['id'], domains, 'https://depian.ru/ismoil')

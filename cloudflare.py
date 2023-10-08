@@ -70,33 +70,15 @@ class CloudFlare:
             return False
 
 
-
-
-
     def BindDomain(self, zone_id, domain, server_domain):
-        url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/pagerules"
+        url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records'
 
         data = {
-            "targets": [
-                {
-                    "target": "url",
-                    "constraint": {
-                        "operator": "matches",
-                        "value": domain+"*",  # Условие перенаправления
-                    },
-                }
-            ],
-            "actions": [
-                {
-                    "id": "forwarding_url",
-                    "value": {
-                        "url": server_domain,  # Целевой URL
-                        "status_code": 301,  # Тип перенаправления (302 - временное, 301 - постоянное)
-                    },
-                }
-            ],
+            'type': 'A',  # Change to 'CNAME' for a CNAME record
+            'name': domain,  # Replace with the name of the DNS record (e.g., subdomain.example.com)
+            'content': server_domain,
+            'proxied': True
         }
-
 
         response = requests.post(url, headers=self.headers, json=data)
 
@@ -105,5 +87,3 @@ class CloudFlare:
         else:
             print(response.text)
             return False
-        
-

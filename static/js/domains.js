@@ -14,6 +14,8 @@ $('.form').submit(function(e){
         page = $('#page').val(),
         path = $('#path').val(),
         redirect = $('#redirect').val();
+        redirect_success = $('#redirect_success').val();
+        security = $('#security').is(":checked");
 
     $.ajax({
         method: 'post',
@@ -23,7 +25,9 @@ $('.form').submit(function(e){
             domain: domain,
             page: page,
             path: path,
-            redirect: redirect
+            redirect: redirect,
+            redirect_success: redirect_success,
+            security: security
         },
         success: function(data) {
             console.log(data);

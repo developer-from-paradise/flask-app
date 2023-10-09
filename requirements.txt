@@ -6,3 +6,4 @@ pyOpenSSL==22.0.0
 cryptography==41.0.3
 requests==2.31.0
 peewee==3.16.3
+validators==0.22.0 

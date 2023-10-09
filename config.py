@@ -21,22 +21,3 @@ class BaseConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'A SECRET KEY'
     DEBUG = True
     permanent_session_lifetime = timedelta(minutes=5)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

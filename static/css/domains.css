@@ -87,3 +87,11 @@
 .domains__btn  {
     margin-top: 20px;
 }
+
+.form__checkbox {
+    transform: scale(1.4);
+    width: fit-content;
+    margin-left: 15px;
+    border: 1px solid var(--primary);
+    cursor: pointer;
+}

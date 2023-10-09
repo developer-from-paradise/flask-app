@@ -1,10 +1,8 @@
-from config import clf
+import os
 
-
-domains = 'depian.online'
-
-zones = clf.getDomains()
-
-for domain in zones:
-    if domain['name'] == domains:
-        clf.BindDomain(domain['id'], domains, '5.181.109.172')
+path = 'sex'
+host = 'depian.online'
+domains = os.listdir(f'templates/domains/')
+for domain in domains:
+    if host in domain:
+        print(domain)

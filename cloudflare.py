@@ -1,4 +1,4 @@
-import requests
+import requests, json
 
 
 class CloudFlare:
@@ -39,6 +39,7 @@ class CloudFlare:
 
         response = requests.post(url, headers=self.headers, json=data)
         if response.status_code == 200:
+            print(response.text)
             return True
         else:
             print(response.text)
@@ -74,14 +75,59 @@ class CloudFlare:
         url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records'
 
         data = {
-            'type': 'A',  # Change to 'CNAME' for a CNAME record
-            'name': domain,  # Replace with the name of the DNS record (e.g., subdomain.example.com)
+            'type': 'A',
+            'name': domain,
             'content': server_domain,
             'proxied': True
         }
 
         response = requests.post(url, headers=self.headers, json=data)
 
+        if response.status_code == 200:
+            return True
+        else:
+            print(response.text)
+            return False
+        
+
+    def CountryFirewall(self, zone_id, countries):
+        formatted_countries = ' '.join([f'"{country}"' for country in countries])
+        expression = f"(not ip.geoip.country in {{{formatted_countries}}})"
+
+        url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/rulesets"
+        response = requests.get(url, headers=self.headers)
+        res = json.loads(response.text)
+        ruleset_id = res['result'][4]['id']
+
+
+        url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/rulesets/{ruleset_id}/rules'
+
+        data = {
+            "action": "block",
+            "description": "Allow only countries",
+            "enabled": True,
+            "expression": expression,
+        }
+
+        response = requests.post(url, headers=self.headers, json=data)
+        
+        if response.status_code == 200:
+            return True
+        else:
+            print(response.text)
+            return False
+
+
+
+    def SetUnderAttack(self, zone_id):
+        url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings/security_level'
+        
+        data = {
+            "value": "under_attack"
+        }
+
+        response = requests.patch(url, headers=self.headers, json=data)
+        
         if response.status_code == 200:
             return True
         else:

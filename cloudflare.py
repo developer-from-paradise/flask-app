@@ -71,13 +71,13 @@ class CloudFlare:
             return False
 
 
-    def BindDomain(self, zone_id, domain, server_domain):
+    def BindDomain(self, zone_id, domain, server_ip):
         url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records'
 
         data = {
             'type': 'A',
             'name': domain,
-            'content': server_domain,
+            'content': server_ip,
             'proxied': True
         }
 

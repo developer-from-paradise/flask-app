@@ -86,6 +86,9 @@ class CloudFlare:
         if response.status_code == 200:
             return True
         else:
+            data = json.loads(response.text)
+            if data['errors']['code'] == 81057:
+                return True
             print(response.text)
             return False
         

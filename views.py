@@ -380,7 +380,7 @@ def page_not_found(e):
 #                  Выход                  #
 #                                         #
 ###########################################
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['POST', 'GET'])
 def logout():
     if 'username' in session and session['username'] != db.GetAdmins(session['username'])[0]:
         user = db.GetUserBy('username', session['username'])[0]

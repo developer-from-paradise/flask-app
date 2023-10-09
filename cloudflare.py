@@ -87,7 +87,7 @@ class CloudFlare:
             return True
         else:
             data = json.loads(response.text)
-            if data['errors']['code'] == 81057:
+            if data['errors'][0]['code'] == 81057:
                 return True
             print(response.text)
             return False

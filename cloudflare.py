@@ -40,7 +40,7 @@ class CloudFlare:
         response = requests.post(url, headers=self.headers, json=data)
         if response.status_code == 200:
             print(response.text)
-            return True
+            return response.text
         else:
             print(response.text)
             return False

@@ -38,13 +38,13 @@
             <tbody>
                 {% for domain in domains %}
                 <tr>
-                    <td>{{ domain[0] }}</td>
+                    <td><a href="https:/{{ domain[0] }}">https://{{ domain[0] }}</a></td>
                     <td>{{ domain[1] }}</td>
                     <td>{{ domain[2] }}</td>
-                    <td>{{ domain[3] }}</td>
-                    <td>{{ domain[4] }}</td>
-                    <td>{{ domain[5] }}</td>
-                    <td>{{ domain[6] }}</td>
+                    <td>{% if domain[4] == 'true' %}Включена{% else %}Выключена{% endif %}</td>
+                    <td>{% if domain[3] == 'pending' %}В процессе{% else %}Активна{% endif %}                    </td>
+                    <td>{{ domain[8] }}</td>
+                    <td>{{ domain[9] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

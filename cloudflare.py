@@ -100,7 +100,9 @@ class CloudFlare:
         url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/rulesets"
         response = requests.get(url, headers=self.headers)
         res = json.loads(response.text)
-        ruleset_id = res['result'][4]['id']
+        for data in res['result']:
+            if data['phase'] == 'http_request_firewall_custom':
+                ruleset_id = data['id']
 
 
         url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/rulesets/{ruleset_id}/rules'

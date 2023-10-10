@@ -132,7 +132,7 @@ def login():
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
         except:
-            return redirect("https://" + domain)
+            return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
 
@@ -180,7 +180,7 @@ def panel():
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
         except:
-            return redirect("https://" + domain)
+            return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
 
@@ -310,7 +310,7 @@ def domains():
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
         except:
-            return redirect("https://" + domain)
+            return redirect(url_for('index', path=request.path.replace('/', '')))
 
 
 

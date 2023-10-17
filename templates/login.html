@@ -25,10 +25,11 @@
                     <div class="login__box-info {{class_name}}">{{msg}}</div>
                 {% endfor %}
             {% endif %}
-        {% endwith %}    
+        {% endwith %}
+
         <form action="#" class="login__box-form" method="post">
-            <input type="text"  placeholder="Имя пользователя" name="username" id="" class="login__box-form-input">
-            <input type="password" placeholder="Пароль"  name="password" id="" class="login__box-form-input">
+            <input type="text"  placeholder="Имя пользователя" name="username" class="login__box-form-input">
+            <input type="password" placeholder="Пароль"  name="password" class="login__box-form-input">
             <input type="submit" value="Войти" class="login__box-form-btn">
         </form>
     </div>

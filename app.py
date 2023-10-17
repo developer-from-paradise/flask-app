@@ -5,7 +5,7 @@ import os
 import logging
 
 # создание экземпляра приложения
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.config.from_object('config.BaseConfig')
 app.wsgi_app = ProxyFix(app.wsgi_app)
 

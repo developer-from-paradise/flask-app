@@ -99,6 +99,97 @@ label {
     --error: #cc3300;
 }
 
+
+/* Loading */
+.loader {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  z-index: 99999999999;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0.6;
+}
+
+.loader .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border: 3px solid #3c3c3c;
+  border-radius: 50%;
+  font-size: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,.5);
+}
+.loader .loading:before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top: 3px solid var(--primary);
+  border-right: 3px solid var(--primary);
+  border-radius: 50%;
+  animation:animateLoadingC 2s linear infinite;
+}
+
+.loader .loading span {
+  display: block;
+  position: absolute;
+  top: calc(50% - 2px);
+  left: 50%;
+  width: 50%;
+  height: 4px;
+  background:transparent;
+  transform-origin: left;
+  animation: animateLoading 2s linear infinite;
+}
+
+.loader .loading span:before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  top: -6px;
+  right: -8px;
+  box-shadow: 0 0 20px var(--primary);
+}
+
+@keyframes animateLoadingC {
+  0%
+  {
+    transform:rotate(0deg);
+  }
+  100%
+  {
+    transform:rotate(360deg);
+  }
+}
+
+@keyframes animateLoading {
+  0%
+  {
+    transform:rotate(45deg);
+  }
+  100%
+  {
+    transform:rotate(405deg);
+  }
+}
+
+
+
+
+
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;800&display=swap');
 body {
@@ -139,6 +230,9 @@ a:hover {
     transition: 0.3s all;
 }
 
+a {
+    cursor: pointer;
+}
 
 .alert_box {
     display: none;
@@ -186,9 +280,10 @@ a:hover {
     display: none;
 }
 
-
-
-
+.readonly {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 
 
 

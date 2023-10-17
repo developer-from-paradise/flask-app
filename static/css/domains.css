@@ -95,3 +95,60 @@
     border: 1px solid var(--primary);
     cursor: pointer;
 }
+
+.inprocess {
+    padding: 7px;
+    background-color: #F3E40F;
+    border-radius: 5px;
+}
+
+.disabled {
+    padding: 7px;
+    background-color: #EA090D;
+    border-radius: 5px;
+}
+
+.enabled {
+    padding: 7px;
+    background-color: #52EA00;
+    border-radius: 5px;
+}
+
+.main__table-icon {
+    min-width: 20px;
+    width: 20px;
+}
+
+
+.remove__domain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+.remove__domain h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+.remove__domain h3 span {
+    font-weight: normal;
+}
+
+.remove__domain-btns {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+.remove__domain-button {
+    background: var(--primary);
+    color: var(--secondary);
+    padding: 7px 50px;
+    transition: 0.3s all;
+    border: 1px solid var(--primary);
+}
+
+.remove__domain-button:hover {
+    background: none;
+    color: #000000;
+}

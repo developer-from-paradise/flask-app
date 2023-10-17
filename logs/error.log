@@ -1,7 +1,0 @@
-2023-10-09 15:46:25,769 - werkzeug - WARNING -  * Debugger is active!
-2023-10-09 15:46:25,769 - werkzeug - INFO -  * Debugger PIN: 123-407-397
-2023-10-09 15:46:29,405 - werkzeug - INFO -  * Detected change in 'C:\\Users\\Ismoil\\Desktop\\Telefish\\app.py', reloading
-2023-10-09 15:46:29,407 - werkzeug - INFO -  * Detected change in 'C:\\Users\\Ismoil\\Desktop\\Telefish\\app.py', reloading
-2023-10-09 15:46:29,407 - werkzeug - INFO -  * Detected change in 'C:\\Users\\Ismoil\\Desktop\\Telefish\\app.py', reloading
-2023-10-09 15:46:2023-10-09 15:46:30,077 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
-\\app.py', reloading

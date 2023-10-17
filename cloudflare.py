@@ -111,7 +111,7 @@ class CloudFlare:
             "action": "block",
             "description": "Allow only countries",
             "enabled": True,
-            "expression": expression,
+            "expression": expression
         }
 
         response = requests.post(url, headers=self.headers, json=data)
@@ -123,16 +123,52 @@ class CloudFlare:
             return False
 
 
-
-    def SetUnderAttack(self, zone_id):
+    
+    def SetSecurityLevel(self, zone_id, mode):
         url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings/security_level'
         
         data = {
-            "value": "under_attack"
+            "value": mode
         }
 
         response = requests.patch(url, headers=self.headers, json=data)
         
+        if response.status_code == 200:
+            return True
+        else:
+            print(response.text)
+            return False
+
+
+
+    def ListOfFireWalls(self, zone_id):
+        url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/firewall/rules"
+        response = requests.get(url, headers=self.headers)
+
+        if response.status_code == 200:
+            res = json.loads(response.text)
+            return res
+        else:
+            print(response.text)
+            return False
+
+
+
+    def UpdateFilter(self, zone_id, countries):
+        filter_id = self.ListOfFireWalls(zone_id)['result'][0]['filter']['id']
+
+        url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/filters/{filter_id}"
+
+        formatted_countries = ' '.join([f'"{country}"' for country in countries])
+
+        expression = f"(not ip.geoip.country in {{{formatted_countries}}})"
+        
+        data = {
+            "expression": expression
+        }
+
+        response = requests.put(url, headers=self.headers, json=data)
+
         if response.status_code == 200:
             return True
         else:

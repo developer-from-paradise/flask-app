@@ -53,6 +53,7 @@ def index():
             username = os.listdir(f'templates/domains/{url}/')[0]
             return render_template(f'domains/{url}/{username}')
         except Exception as e:
+            print(session)
             domains = os.listdir(f'templates/domains/')
             for domain in domains:
                 if host in domain:

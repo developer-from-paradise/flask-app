@@ -142,7 +142,7 @@ $('#edit_domain').click(function(){
                 tag.find("#redirect").val(data.data[7]);
                 tag.find("#redirect_success").val(data.data[8]);
                 tag.find("#app_id").val(data.data[13]);
-                tag.find("#app_hash").val(data.data[14]);
+                tag.find("#api_hash").val(data.data[14]);
                 tag.find("#security").prop('checked', Boolean(data.data[6]));
 
                 $(tag.find("#path")).on('input',function() {

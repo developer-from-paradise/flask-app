@@ -174,3 +174,28 @@ class CloudFlare:
         else:
             print(response.text)
             return False
+        
+
+    def RemoveFilter(self, zone_id):
+        data = self.ListOfFireWalls(zone_id)
+        firewall_id = data['result'][0]['id']
+        filter_id = data['result'][0]['filter']['id']
+
+        url_1 = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/firewall/rules/{firewall_id}"
+        url_2 = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/filters/{filter_id}"
+        
+
+        response = requests.delete(url_1, headers=self.headers)
+
+        if response.status_code == 200:
+            response = requests.delete(url_2, headers=self.headers)
+            if response.status_code == 200:
+                return True
+            else:
+                print(response.text)
+                return False
+        else:
+            print(response.text)
+            return False
+        
+

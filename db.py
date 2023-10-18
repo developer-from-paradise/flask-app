@@ -141,7 +141,7 @@ class Victim:
     def GetRedirect(self):
         with SqliteDatabase(self.database_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"SELECT redirect FROM domains'")
+            cursor.execute(f"SELECT redirect FROM domains")
             conn.commit()
             data = cursor.fetchall()
             return data
@@ -176,6 +176,7 @@ class Victim:
                     clf.CountryFirewall(zone_id, countries)
                     if security == 'true':
                         clf.SetSecurityLevel(zone_id, 'under_attack')
+
                     return [True, 'Домен успешно добавлен']
                 else:
                     return [False, 'Что-то пошло не так, свяжитесь с админом']
@@ -260,7 +261,8 @@ class Victim:
                 for zone in zones:
                     if zone['name'] == domain:
                         clf.RemoveDomain(zone['id'])
-
+                        clf.SetSecurityLevel(zone['id'], 'medium')
+                        clf.RemoveFilter(zone['id'])
             return True
         except Exception as e:
             return False

@@ -266,3 +266,16 @@ class Victim:
             return True
         except Exception as e:
             return False
+        
+
+
+    
+    def AddView(self, domain):
+        try:
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"UPDATE domains SET views = views + 1 WHERE domain = '{domain}'")
+                conn.commit()
+                return True
+        except:
+            return False

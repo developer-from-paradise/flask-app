@@ -163,9 +163,9 @@ $('#edit_domain').click(function(){
                 });
                 countries = data.data[9].split(', ');
 
-                for (let i = 0; i < countries.length; i++) {
-                    $('.js-select3').val(countries[i]).trigger('change');                    
-                }
+              
+                $('.js-select3').val(countries).trigger('change');                    
+  
             
             
                 $.fancybox.open({

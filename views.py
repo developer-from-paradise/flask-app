@@ -42,14 +42,14 @@ def enforce_https():
 
 
 @app.route('/')
-def index():
+def index(path=None):
     host = request.headers.get('Host')
     if host == server_domain:
         return redirect(url_for('panel'))
     else:
         print('I am here')
         try:
-            path = request.args.get('path', None)
+            
             print('I am here2')
 
             url = host + '$' + path

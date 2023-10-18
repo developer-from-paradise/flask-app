@@ -50,8 +50,9 @@ def index():
         print('I am here')
         try:
             
-            print('I am here2')
-            path = request.form.get('path')
+            print(request)
+            path = request.headers.get('path')
+            print(path)
             url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
             

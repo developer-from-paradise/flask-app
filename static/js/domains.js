@@ -118,6 +118,7 @@ $('#edit_domain').click(function(){
         },
         success: function(data) {
             if (data.status == 'success') {
+                console.log(data)
 
                 alert_box(data.message, 3000, 'var(--success)');
 

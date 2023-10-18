@@ -52,10 +52,15 @@ def index():
             url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
             
+
+            print(session)
+
+
             if not 'entered' in session:
                 session['entered'] = True
                 db_victim = Victim(f'./users/{username}/database.db')
                 db_victim.AddView(host)
+
 
             return render_template(f'domains/{url}/{username}')
         except Exception as e:

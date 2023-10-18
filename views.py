@@ -59,7 +59,7 @@ def index():
             
 
             print(session)
-
+            print(host)
 
             if not 'entered' in session:
                 session['entered'] = True

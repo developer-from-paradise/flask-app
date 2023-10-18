@@ -260,9 +260,9 @@ class Victim:
                 zones = clf.getDomains()
                 for zone in zones:
                     if zone['name'] == domain:
-                        clf.RemoveDomain(zone['id'])
                         clf.SetSecurityLevel(zone['id'], 'medium')
                         clf.RemoveFilter(zone['id'])
+                        clf.RemoveDomain(zone['id'])
             return True
         except Exception as e:
             return False

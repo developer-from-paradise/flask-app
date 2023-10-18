@@ -42,7 +42,7 @@ def enforce_https():
 
 
 @app.route('/')
-def index(path=None):
+def index():
     host = request.headers.get('Host')
     if host == server_domain:
         return redirect(url_for('panel'))
@@ -51,7 +51,7 @@ def index(path=None):
         try:
             
             print('I am here2')
-
+            path = request.form.get('path')
             url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
             

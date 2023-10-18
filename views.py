@@ -65,6 +65,8 @@ def index():
                 session['entered'] = True
                 db_victim = Victim(f'./users/{username}/database.db')
                 db_victim.AddView(host)
+            else:
+                session.pop('entered')
             print('I am here3')
 
 

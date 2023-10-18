@@ -188,8 +188,8 @@ $('#edit_domain').click(function(){
                         redirect = tag.find("#redirect").val();
                         redirect_success = tag.find('#redirect_success').val();
                         security = tag.find('#security').is(":checked");
-                        app_id = $('#app_id').val();
-                        api_hash = $('#api_hash').val();
+                        app_id = tag.find('#app_id').val();
+                        api_hash = tag.find('#api_hash').val();
                     $.ajax({
                         method: 'post',
                         url: '/edit_domain',

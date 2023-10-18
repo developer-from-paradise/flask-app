@@ -161,7 +161,7 @@ $('#edit_domain').click(function(){
                     allowHtml: true,
                     allowClear: true
                 });
-                countries = data.data[9].split(', ');
+                let countries = data.data[9].split(', ');
 
               
                 $('.js-select3').val(countries).trigger('change');                    

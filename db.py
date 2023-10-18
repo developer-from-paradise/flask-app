@@ -154,6 +154,9 @@ class Victim:
 
         if added_domain:
             data = json.loads(added_domain)
+            print(data['result']['status'])
+            print(data['result'])
+
             zone_id = data['result']['id']
             status = data['result']['status']
             ns_servers = ', '.join(data['result']['name_servers'])

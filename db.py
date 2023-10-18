@@ -154,8 +154,6 @@ class Victim:
 
         if added_domain:
             data = json.loads(added_domain)
-            print(data['result']['status'])
-            print(data['result'])
 
             zone_id = data['result']['id']
             status = data['result']['status']
@@ -268,6 +266,7 @@ class Victim:
                         clf.RemoveDomain(zone['id'])
             return True
         except Exception as e:
+            print(e)
             return False
         
 

@@ -1,0 +1,95 @@
+.loading {
+    display: none;
+    z-index: 999999;
+    position: absolute;
+    background: rgba(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+  }
+  
+.bg-loader {
+    background-color: #0E1621;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+}
+  
+.loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    position: relative;
+    animation: rotate 1s linear infinite
+}
+.loader::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    inset: 0px;
+    border-radius: 50%;
+    border: 3px solid #B0B0B0;
+    animation: prixClipFix 2s linear infinite;
+}
+
+@keyframes rotate {
+100%   {transform: rotate(360deg)}
+}
+
+@keyframes prixClipFix {
+    0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+    25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+    50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+    75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+    100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+}
+
+
+
+.alert {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #0E1621;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: slideInDown 0.8s forwards;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFFFFF;
+    text-align: center;
+  }
+  
+  @keyframes slideInDown {
+    0% {
+      transform: translate(-50%, -60dvh);
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -45dvh);
+    }
+  }
+
+  .slideOutUp {
+    animation: slideOutUp 0.8s forwards;
+}
+  @keyframes slideOutUp {
+    0% {
+      transform: translate(-50%, -45dvh);
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -60dvh);
+    }
+  }

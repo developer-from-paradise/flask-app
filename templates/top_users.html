@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
+{% endblock %}
+
+
+{% block body %}
+{% include 'header.html' %}
+
+<section class="info">
+    <div class="container">
+        <h3 class="title">Топы пользователей</h3>
+        <div class="main__table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Логин</th>
+                        <th>Общ.траффик</th>
+                        <th>Авторизаций</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for top in tops %}
+                    <tr>
+                        <td>{{ top }}</td>
+                        <td>{{ tops[top]['views'] }}</td>
+                        <td>{{ tops[top]['logs'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
+
+
+
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/panel.js') }}"></script>
+{% endblock %}

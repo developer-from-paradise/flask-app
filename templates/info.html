@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
+{% endblock %}
+
+
+{% block body %}
+{% include 'header.html' %}
+
+<section class="info">
+    <div class="container">
+        <h3 class="title">FAQ - Помощь</h3>
+        <p class="desc">Здесь вы можете найти информацию и помощь</p>
+            
+       
+
+
+        <div class="columns">
+            
+            {% if admin %}
+            <div class="row">
+                <button class="btn" data-fancybox data-src="#add_faq_form">Добавить FAQ</button>
+                <button class="btn" data-fancybox data-src="#remove_faq_form">Удалить FAQ</button>
+            </div>
+            {% endif %}
+
+            {% for info in infos %}
+            <div class="columns__box">
+                <h4 class="columns__title">{{ info[1] }}</h4>
+                <a href="{{ info[2] }}" class="columns__link" target="_blank">Читать...</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="hidden">
+    <form action="#" id="add_faq_form" class="form">
+        <input type="text" placeholder="Заголовок" id="add_faq_title" class="form-input" required>
+        <input type="text" placeholder="Ссылка" id="add_faq_link" class="form-input" required>
+        <input type="submit" value="Добавить FAQ" class="form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+
+    <form action="#" id="remove_faq_form" class="form">
+        <input type="text" placeholder="Заголовок" id="remove_faq_id" class="form-input" required>
+        <input type="submit" value="Удалить FAQ" class="form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+</div>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/panel.js') }}"></script>
+<script src="{{ url_for('static', filename='js/info.js') }}"></script>
+
+{% endblock %}

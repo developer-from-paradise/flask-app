@@ -197,5 +197,3 @@ class CloudFlare:
         else:
             print(response.text)
             return False
-        
-

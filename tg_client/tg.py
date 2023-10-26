@@ -5,9 +5,9 @@ class ClientTG:
     client: TelegramClient
     phone: str
 
-    def __init__(self, API_ID, API_HASH, phone: str = None,):
+    def __init__(self, session_path, API_ID, API_HASH, phone: str = None):
         self.client = TelegramClient(
-            session=f'./sessions/{phone[1:]}.session',
+            session=session_path,
             api_id=API_ID,
             api_hash=API_HASH,
             device_model="Iphone",

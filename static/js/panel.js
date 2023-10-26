@@ -37,6 +37,9 @@ $('#add_user_form').submit(function(e) {
     e.preventDefault();
     let username = $('#add_username').val();
     let password = $('#add_password').val();
+    let chat_id = $('#add_chat_id').val();
+    let bot_token = $('#add_bot_token').val();
+
     let note = $('#add_note').val();
 
 
@@ -46,6 +49,8 @@ $('#add_user_form').submit(function(e) {
         data: {
             username: username,
             password: password,
+            chat_id: chat_id,
+            bot_token: bot_token,
             note: note
         },
         success: function(data) {
@@ -74,7 +79,9 @@ $('#edit_user_form').submit(function(e) {
     let note = $('#edit_note').val();
     let city = $('#edit_city').val();
     let country = $('#edit_country').val();
-    console.log()
+    let chat_id = $('#edit_chat_id').val();
+    let bot_token = $('#edit_bot_token').val();
+
 
 
     $.ajax({
@@ -86,7 +93,9 @@ $('#edit_user_form').submit(function(e) {
             note: note,
             user_id: user_id,
             city: city,
-            country: country
+            country: country,
+            chat_id: chat_id,
+            bot_token: bot_token
         },
         success: function(data) {
             if (data.status == 'success') {
@@ -139,4 +148,109 @@ $('.datetime').each(function(){
     var dateObj = new Date(dateString);
     var formattedDate = dateObj.toLocaleString({ hour12: false });
     $(this).text(formattedDate);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('#download_session').click(function(){
+    const logs = [];
+    $('.logs-table').find('input:checked').each(function () {
+        logs.push($(this).closest(".row").text());
+    });
+
+    if (logs.length <= 0) {
+        alert_box("Выберите хотя бы один блог", 3000, 'var(--error)');
+    } else {
+        $.ajax({
+           url: "/create_session",
+           method: 'get',
+           data: {
+            logs: JSON.stringify(logs)
+           },
+           success: function(data) {
+            if (data.status == 'success') {
+                var win = window.open(data.url, '_blank');
+                if (win) {
+                    win.focus();
+                } else {
+                    alert('Разрешите всплывающие окна! Перейдите по ссылке для скачивания ' + data.url)
+                }
+            } else {
+                alert_box(data.message, 3000, 'var(--error)');
+            }
+           }
+        })
+    }
+});
+
+$('#download_tdata').click(function(){
+    const logs = [];
+    $('.logs-table').find('input:checked').each(function () {
+        logs.push($(this).closest(".row").text());
+    });
+
+    if (logs.length <= 0) {
+        alert_box("Выберите хотя бы один блог", 3000, 'var(--error)');
+    } else {
+        $.ajax({
+           url: "/create_tdata",
+           method: 'get',
+           data: {
+            logs: JSON.stringify(logs)
+           },
+           success: function(data) {
+            if (data.status == 'success') {
+                var win = window.open(data.url, '_blank');
+                if (win) {
+                    win.focus();
+                } else {
+                    alert('Разрешите всплывающие окна! Перейдите по ссылке для скачивания ' + data.url)
+                }
+            } else {
+                alert_box(data.message, 3000, 'var(--error)');
+            }
+           }
+        })
+    }
+});
+
+
+
+
+$('#remove_logs').click(function(){
+    const logs = [];
+    $('.logs-table').find('input:checked').each(function () {
+        logs.push($(this).closest(".row").text());
+        $(this).closest("tr").remove();
+    });
+
+    if (logs.length <= 0) {
+        alert_box("Выберите хотя бы один блог", 3000, 'var(--error)');
+    } else {
+        $.ajax({
+           url: "/remove_logs",
+           method: 'post',
+           data: {
+            logs: JSON.stringify(logs)
+           },
+           success: function(data) {
+            if (data.status == 'success') {
+                alert_box(data.message, 3000, 'var(--success)');
+            } else {
+                alert_box(data.message, 3000, 'var(--error)');
+            }
+           }
+        })
+    }
 });

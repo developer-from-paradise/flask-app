@@ -9,7 +9,6 @@ app = Flask(__name__, template_folder='templates')
 app.config.from_object('config.BaseConfig')
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-
 # # # Logging
 # log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 # os.makedirs(log_dir, exist_ok=True)

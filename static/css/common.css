@@ -3,6 +3,7 @@
 	padding: 0px;
 	margin: 0px;
 	border: none;
+  transition: 0.2s all;
 }
 
 *,
@@ -191,7 +192,7 @@ label {
 
 
 /* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;800&display=swap');
 body {
     font-family: 'Montserrat', 'Ubuntu', sans-serif;
 }
@@ -254,6 +255,7 @@ a {
     font-size: 32px;
     line-height: 27px;
     color: var(--dark);
+    font-weight: 800;
 }
 
 .desc {
@@ -285,6 +287,115 @@ a {
   opacity: 0.7;
 }
 
+.row {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  align-items: center;
+}
+
+.log-checkbox {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  background: var(--primary);
+}
+
+
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.columns .columns__box {
+  width: 100%;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--secondary);
+}
+
+.columns .columns__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.columns .columns__link {
+  color: var(--secondary);
+  background: var(--primary);
+  padding: 9px 20px;
+  width: fit-content;
+}
+
+.columns .columns__desc {
+  color: var(--dark);
+  opacity: 0.8;
+}
+
+.columns .columns__circle {
+  display: flex;
+  color: var(--secondary);
+  min-width: 50px;
+  max-width: 50px;
+  width: 100%;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: auto 0;
+}
+
+.columns .columns__date {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.columns .columns__date i {
+  margin-right: 10px;
+}
+
+@media (max-width: 576px) {
+  .columns .columns__box {
+    padding: 6px 0px;
+  }
+
+  .row {
+    flex-wrap: wrap;
+  }
+}
 
 
 
+.form-input, .form-textarea {
+  border-bottom: 1px solid var(--primary);
+  padding: 10px 5px;
+  width: 100%;
+  resize: vertical;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-btn {
+  border: 1px solid var(--primary);
+  background-color: var(--primary);
+  color: var(--secondary);
+  padding: 13px;
+  width: 210px;
+  display: flex !important;
+  margin: 0 auto;
+  margin-top: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-btn:hover {
+  color: var(--dark);
+  background: none;
+}

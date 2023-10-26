@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+
+{% block body %}  
+{% include 'header.html' %}
+
+
+<section class="main">
+<div class="container">
+    <h3 class="title">Сократитель ссылок</h3>
+    <p class="desc">Здесь вы можете сократить ссылку через сервис clck.ru</p>
+
+   <form class="form" id="shortener_form">
+        <input type="text" placeholder="Введите URL" class="form-input" id="shortener_url" required>
+        <div class="row">
+            <p class="desc" style="margin-top: 0;">Сокращённая ссылка: </p>
+            <a href="" target="_blank" rel="noopener noreferrer" id="shortener_link"></a>
+        </div>
+        <button type="submit" class="form-btn">Сократить</button>        
+   </form>
+</div>
+</section>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/panel.js') }}"></script>
+<script src="{{ url_for('static', filename='js/shortener.js') }}"></script>
+
+{% endblock %}

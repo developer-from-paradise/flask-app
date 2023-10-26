@@ -15,13 +15,16 @@
     </div>
     
     <ul class="nav__links animate__animated">
-        
+        <li><a href="{{ url_for('news') }}">Новости</a></li>
+        <li><a href="{{ url_for('panel') }}">Аккаунты</a></li>
         {% if admin %}
         <li><a href="{{ url_for('panel', top_users=True) }}">Топ пользователей</a></li>
         <li><a href="{{ url_for('panel', users_manage=True) }}">Управление пользователями</a></li>
         {% else %}
-        <li><a href="{{ url_for('panel') }}">Аккаунты</a></li>
         <li><a href="{{ url_for('domains') }}">Мои домены</a></li>
+        <li><a href="{{ url_for('shortener') }}">Сократитель ссылок</a></li>
         {% endif %}
+        <li><a href="{{ url_for('info') }}">FAQ</a></li>
+
     </ul>
 </nav>

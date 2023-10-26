@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
+{% endblock %}
+
+
+{% block body %}
+{% include 'header.html' %}
+
+<section class="info">
+    <div class="container">
+        <h3 class="title">Новости</h3>
+        <p class="desc">Новости про панель </p>
+        
+        {% if admin %}
+            <div class="row">
+                <button class="btn" data-fancybox data-src="#add_new_form">Добавить новость</button>
+                <button class="btn" data-fancybox data-src="#edit_new_form">Изменить новость</button>
+                <button class="btn" data-fancybox data-src="#remove_new_form">Удалить новость</button>
+            </div>
+        {% endif %}
+        <div class="columns" style="flex-direction: column-reverse;">
+            {% for new in news %}
+            <div class="columns__box">
+                <div class="row">
+                    <div class="columns__circle">{{ new[0] }}</div>
+                    <div class="columns__box">
+                        <div class="columns__date"><i class="fa fa-clock"></i><span class="datetime">{{ new[3] }}</span></div>
+                        <h4 class="columns__title">{{ new[1] }}</h4>
+                        <p class="columns__desc">{{ new[2] }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="hidden">
+    <form action="#" id="add_new_form" class="form">
+        <input type="text" placeholder="Заголовок" id="add_new_title" class="form-input" required>
+        <textarea name=""  placeholder="Описание" id="add_new_desc" class="form-textarea"></textarea>
+        <input type="submit" value="Добавить новость" class="form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+
+    <form action="#" id="edit_new_form" class="form">
+        <input type="text" placeholder="ID" id="edit_new_id" class="form-input" required>
+        <input type="text" placeholder="Заголовок" id="edit_new_title" class="form-input" required>
+        <textarea name=""  placeholder="Описание" id="edit_new_desc" class="form-textarea"></textarea>
+        <input type="submit" value="Изменить новость" class="form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+
+    <form action="#" id="remove_new_form" class="form">
+        <input type="text" placeholder="ID" id="remove_new_id" class="form-input" required>
+        <input type="submit" value="Удалить новость" class="form-btn">
+        <div class="alert_box animate__animated"></div>
+    </form>
+</div>
+
+
+
+
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/panel.js') }}"></script>
+<script src="{{ url_for('static', filename='js/news.js') }}"></script>
+{% endblock %}

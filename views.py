@@ -52,11 +52,11 @@ async def is_valid_session(session_path):
 
 
 
-# @app.before_request
-# async def enforce_https():
-#     if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
-#         https_url = request.url.replace('http://', 'https://', 1)
-#         return redirect(https_url, code=301)
+@app.before_request
+async def enforce_https():
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+        https_url = request.url.replace('http://', 'https://', 1)
+        return redirect(https_url, code=301)
 
 
 

@@ -38,6 +38,16 @@
             <button class="btn" id="remove_logs">Удалить</button>
 
         </div>
+        
+        <div class="radio-switch">
+            <label class="radio-switch__label radio-switch__label" id="select_all">
+                Выбрать все
+            </label>
+        
+            <label class="radio-switch__label radio-switch__label" id="unselect_all">
+                Убрать все
+            </label>
+        </div>
 
         {% if not admin %}
         <h3 class="main__table-title">Количество логов: {{ logs | length }}</h3>

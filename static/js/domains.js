@@ -60,7 +60,7 @@ $("#add_domain").click(function(){
 });
 
 
-$('#remove_domain').click(function(){
+$('.remove_domain').click(function(){
     let row = $(this).parents('tr');
     let url = row.find('#domain_link').attr('href');
     let domain = row.find('#domain_link').attr('data');
@@ -69,7 +69,7 @@ $('#remove_domain').click(function(){
 });
 
 
-$('#update_domain_info').click(function(){
+$('.update_domain_info').click(function(){
     let row = $(this).parents('tr');
     let url = row.find('#domain_link').attr('href');
     let id = row.find('#id').text();
@@ -95,9 +95,10 @@ $('#update_domain_info').click(function(){
                     status.text(data.data.status);
                     status.attr('class', 'disabled');
                 }
-
+                console.log(data)
                 alert_box(data.message, 3000, 'var(--success)');
             } else {
+                console.log(data)
                 alert_box(data.message, 3000, 'var(--error)');
             }
         }
@@ -106,7 +107,7 @@ $('#update_domain_info').click(function(){
 
 
 
-$('#edit_domain').click(function(){
+$('.edit_domain').click(function(){
     let row = $(this).parents('tr');
     let id = row.find('#id').text();
 
@@ -208,8 +209,11 @@ $('#edit_domain').click(function(){
                         success: function(data) {
                             console.log(data);
                             if (data.status == 'success') {
+                                console.log(data)
                                 alert_box(data.message, 3000, 'var(--success)');
                             } else {
+                                console.log(data)
+
                                 alert_box(data.message, 3000, 'var(--error)');
                             }
                         },
@@ -223,6 +227,8 @@ $('#edit_domain').click(function(){
 
 
             } else {
+                console.log(data)
+
                 alert_box(data.message, 3000, 'var(--error)');
             }
         }
@@ -250,6 +256,7 @@ $('#remove_domain_form').submit(function(e){
             domain: domain
         },
         success: function(data){
+            console.log(data)
             alert_box(data.message, 3000, 'var(--success)')
         },
         error: function(err){

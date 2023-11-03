@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, random, string
 
 
 class CloudFlare:
@@ -39,7 +39,6 @@ class CloudFlare:
 
         response = requests.post(url, headers=self.headers, json=data)
         if response.status_code == 200:
-            print(response.text)
             return response.text
         else:
             print(response.text)
@@ -98,12 +97,37 @@ class CloudFlare:
         expression = f"(not ip.geoip.country in {{{formatted_countries}}})"
 
         url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/rulesets"
+        
         response = requests.get(url, headers=self.headers)
         res = json.loads(response.text)
+        
+        ruleset_id = None
+
         for data in res['result']:
             if data['phase'] == 'http_request_firewall_custom':
                 ruleset_id = data['id']
 
+        if not ruleset_id:
+            data = {
+                "kind": "zone",
+                "name": "Allow only countries",
+                "phase": "http_request_firewall_custom",
+                "rules": [{
+                    "action": "block",
+                    "description": "Allow only countries",
+                    "enabled": True,
+                    "expression": expression
+                }]
+            }
+
+            response = requests.post(url, headers=self.headers, json=data)
+
+            
+            if response.status_code == 200:
+                return True
+            else:
+                print(response.text)
+                return False
 
         url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/rulesets/{ruleset_id}/rules'
 
@@ -178,6 +202,7 @@ class CloudFlare:
 
     def RemoveFilter(self, zone_id):
         data = self.ListOfFireWalls(zone_id)
+
         firewall_id = data['result'][0]['id']
         filter_id = data['result'][0]['filter']['id']
 

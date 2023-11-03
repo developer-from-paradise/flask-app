@@ -1,6 +1,6 @@
 from app import app
-from apscheduler.schedulers.background import BackgroundScheduler
-from views import RemoveLogs
+# from apscheduler.schedulers.background import BackgroundScheduler
+
 
 
 if __name__ == '__main__':

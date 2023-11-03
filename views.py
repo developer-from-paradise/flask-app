@@ -52,11 +52,11 @@ async def is_valid_session(session_path):
 
 
 
-@app.before_request
-async def enforce_https():
-    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
-        https_url = request.url.replace('http://', 'https://', 1)
-        return redirect(https_url, code=301)
+# @app.before_request
+# async def enforce_https():
+#     if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+#         https_url = request.url.replace('http://', 'https://', 1)
+#         return redirect(https_url, code=301)
 
 
 
@@ -563,7 +563,6 @@ async def remove_user():
 @app.route('/edit_user', methods=['POST'])
 async def edit_user():
     if 'username' in session and session['username'] == db.GetAdmins(session['username'])[0]:
-        username = request.form.get('username')
         password = request.form.get('password')
         user_id = request.form.get('user_id')
         city = request.form.get('city')
@@ -572,12 +571,11 @@ async def edit_user():
         user_id = request.form.get('user_id')
         chat_id = request.form.get('chat_id')
         bot_token = request.form.get('bot_token')
-        
+        print(password)
         user = db.GetUserBy('id', user_id)
 
         if user:
             data = [
-                ['username', username],
                 ['password_hash', generate_password_hash(password)],
                 ['city', city],
                 ['country', country],
@@ -585,7 +583,7 @@ async def edit_user():
                 ['bot_token', bot_token],
                 ['note', note],
             ]
-
+            print(generate_password_hash(password))
             db.UpdateUser(data, 'id', user_id)
             
             response = {'status': 'success', 'message': 'Пользватель успешно сменён'}
@@ -899,6 +897,8 @@ async def verify_phone():
 
 
     except Exception as e:
+        print(e)
+        return
         data = db.GetBotData(username)
         chat_id = data[0][0]
         bot_token = data[0][1]

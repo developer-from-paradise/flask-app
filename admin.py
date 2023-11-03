@@ -43,7 +43,7 @@ else:
     try:
         with SqliteDatabase('./users.db') as conn:
             cursor = conn.cursor()
-            cursor.execute(f"DELETE FROM admins WHERE username={login}")
+            cursor.execute(f"DELETE FROM admins WHERE username='{login}'")
             conn.commit()
 
         print('Успешно!')

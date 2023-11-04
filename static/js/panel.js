@@ -185,12 +185,7 @@ $('#download_session').click(function(){
            },
            success: function(data) {
             if (data.status == 'success') {
-                var win = window.open(data.url, '_blank');
-                if (win) {
-                    win.focus();
-                } else {
-                    alert('Разрешите всплывающие окна! Перейдите по ссылке для скачивания ' + data.url)
-                }
+                window.location.href = data.url;
             } else {
                 alert_box(data.message, 3000, 'var(--error)');
             }
@@ -216,12 +211,7 @@ $('#download_tdata').click(function(){
            },
            success: function(data) {
             if (data.status == 'success') {
-                var win = window.open(data.url, '_blank');
-                if (win) {
-                    win.focus();
-                } else {
-                    alert('Разрешите всплывающие окна! Перейдите по ссылке для скачивания ' + data.url)
-                }
+                window.location.href = data.url;
             } else {
                 alert_box(data.message, 3000, 'var(--error)');
             }

